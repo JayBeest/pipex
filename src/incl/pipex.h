@@ -1,43 +1,55 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug.c                                            :+:      :+:    :+:   */
+/*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/15 14:53:45 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/15 15:22:46 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef PIPEX_H
+# define PIPEX_H
+
+# define INFILE argv[1]
+# define CMD1 argv[2]
+# define CMD2 argv[3]
+# define OUTFILE argv[4]
+
+# define ENVP_PATH_CODAM envp[6]
+# define ENVP_PWD_CODAM envp[14]
+# define ENVP_PATH_M1 envp[0]
+# define ENVP_PWD_M1 envp[20]
+
+
 #include <stdio.h>
-#include <pipex.h>
-#include <unistd.h>
 
-void	print_split(char **split)
+
+typedef enum	e_bool
 {
-	int	i;
+	FALSE,
+	TRUE
+}				t_bool;
 
-	i = 0;
-	printf("\n******\n\n");
-	while (split[i])
-		{
-			printf("split[%d] = %s\n", i, split[i]);
-			i++;
-		}
-	printf("\n******\n\n");
-}
-
-void	check_access(char *file)
+typedef enum	e_errno
 {
-	if (access(file, R_OK) == 0)
-		printf("R_OK\n");
-	if (access(file, W_OK) == 0)
-		printf("W_OK\n");
-	if (access(file, X_OK) == 0)
-		printf("X_OK\n");
-	if (access(file, F_OK) == 0)
-		printf("F_OK\n");
-	if (access(file, F_OK | R_OK) == 0)
-		printf("F_OK | R_OK\n");
-}
+	ARG_COUNT,
+	FORK
+}				t_errno;
+
+typedef struct	s_splits
+{
+	char **cmd1_split;
+	char **cmd2_split;
+	char **path_split;
+}				t_splits;
+
+typedef struct	s_cmds
+{
+	char	*cmd1;
+	char	*cmd2;
+}				t_cmds;
+
+#endif

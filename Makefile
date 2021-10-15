@@ -1,10 +1,11 @@
 NAME = 		pipex
-SRC = 		main.c \
+SRC = 		pipex.c \
+			utils.c \
 			debug.c
 SRC_DIR =	src
 OBJ_DIR	= 	$(SRC_DIR)/obj
 INCL = 		-I$(SRC_DIR)/incl
-C_FLAGS = 	-g #-Wall -Wextra -Werror
+C_FLAGS = 	-g -fsanitize=address #-Wall -Wextra -Werror
 OBJ = 		$(SRC:%.c=$(OBJ_DIR)/%.o)
 
 all: $(NAME)
@@ -13,7 +14,7 @@ bonus: all
 
 $(NAME): $(OBJ)
 	$(MAKE) -C libft
-	$(CC) -o $@ $^ -Llibft -lft
+	$(CC) $^ $(C_FLAGS) -Llibft -lft -o $@
 
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.c
 	@mkdir -p $(@D)
