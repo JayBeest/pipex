@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/15 17:17:11 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/16 19:55:55 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 		return (printf("fuck your dup2_stdout :/\n"));
 	close (pipe_fd[0]);
-	splits->cmd2_split = ft_split(CMD2, ' ');
 	wait(NULL);
  	execv(cmd.cmd2, splits->cmd2_split);
 	return (0);
@@ -61,12 +60,26 @@ int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		return (printf("hell no, dup2_pipe_fd[1] fail :(\n"));
 	close (pipe_fd[1]);
-	splits->cmd1_split = ft_split(CMD1, ' ');
 	execv(cmd.cmd1, ft_split(CMD1, ' '));
 	return (0);
 }
 
-
+int	create_splits(char **argv, char **envp, t_splits *splits, t_cmds *commands)
+{
+	splits->cmd1_split = ft_split(CMD1, ' ');
+	if (splits->cmd1_split == NULL)
+		return (printf("cmd1_split fail\n"));
+	splits->cmd2_split = ft_split(CMD2, ' ');
+	if (splits->cmd1_split == NULL)
+		return (printf("cmd1_split fail\n"));
+	commands->cmd1 = find_and_set_path(splits->cmd1_split[0], envp, splits);
+	if (commands->cmd1 == NULL)
+		return (printf("cmd1 fail!\n"));
+	commands->cmd2 = find_and_set_path(splits->cmd2_split[0], envp, splits);
+	if (commands->cmd2 == NULL)
+		return (printf("cmd1 fail!\n"));
+	return (0);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -81,8 +94,8 @@ int	main(int argc, char **argv, char **envp)
 //	check_access(INFILE);
 	ft_bzero(&splits, sizeof(splits));
 
-	commands.cmd1 = find_and_set_path(&CMD1, envp, &splits);
-	commands.cmd2 = find_and_set_path(&CMD2, envp, &splits);
+	if (create_splits(argv, envp, &splits, &commands) != 0)
+		return (printf("mis_split!\n"));
 	if (pipe(pipe_fd) == -1)
 		return (printf("creating pipe failed! :(\n"));
 	pid = fork();

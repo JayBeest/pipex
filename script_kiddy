@@ -1,1 +1,1 @@
-./pipex test_no_access /bin/cat /bin/cat testuh
+./pipex infile "cat -b" "gzip -9" outfile.zip

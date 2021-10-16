@@ -14,6 +14,6 @@
 #define PIPEX_UTILS_H
 
 void	free_t_splits(t_splits splits);
-char	*find_and_set_path(char **cmd_ptr, char **envp, t_splits *splits);
+char	*find_and_set_path(char *cmd_ptr, char **envp, t_splits *splits);
 
 #endif

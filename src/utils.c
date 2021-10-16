@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/15 16:42:53 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/15 17:17:11 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ char	*get_correct_path(char *current_path, char *cmd)
 	return (NULL);
 }
 
-char	*find_and_set_path(char **cmd_ptr, char **envp, t_splits *splits)
+char	*find_and_set_path(char *cmd, char **envp, t_splits *splits)
 {
 	char	**current_path;
 	int		i;
@@ -75,10 +75,10 @@ char	*find_and_set_path(char **cmd_ptr, char **envp, t_splits *splits)
 	current_path = splits->path_split;
 	while (current_path[i])
 	{
-		if (get_correct_path(current_path[i], *cmd_ptr))
+		if (get_correct_path(current_path[i], cmd))
 		{
 			printf("working path: %s\n", current_path[i]);
-			return (get_correct_path(current_path[i], *cmd_ptr));
+			return (get_correct_path(current_path[i], cmd));
 		}
 		i++;
 	}
