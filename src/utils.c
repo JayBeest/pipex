@@ -35,14 +35,14 @@ char	**create_path_split(char **envp)
 	return (ft_split(curr_envp + 5, ':'));
 }
 
-void	free_t_splits(t_splits splits)
+void	free_t_splits(t_splits *splits)
 {
-	if (splits.path_split)
-		ft_free_split(splits.path_split);
-	if (splits.cmd1_split)
-		ft_free_split(splits.path_split);
-	if (splits.cmd2_split)
-		ft_free_split(splits.cmd2_split);
+	if (splits->path_split)
+		ft_free_split(splits->path_split);
+	// if (splits->cmd1_split)
+	// 	ft_free_split(splits->path_split);
+	if (splits->cmd2_split)
+		ft_free_split(splits->cmd2_split);
 }
 
 char	*get_correct_path(char *current_path, char *cmd)
@@ -52,7 +52,7 @@ char	*get_correct_path(char *current_path, char *cmd)
 
 	path = ft_strjoin(current_path, "/");
 	full_cmd = ft_strjoin(path, cmd);
-	printf("checking current path->%s\n", full_cmd);
+	// printf("checking current path->%s\n", full_cmd);
 	if (access(full_cmd, X_OK) == OK)
 	{
 		free(path);
@@ -77,7 +77,7 @@ char	*find_and_set_path(char *cmd, char **envp, t_splits *splits)
 	{
 		if (get_correct_path(current_path[i], cmd))
 		{
-			printf("working path: %s\n", current_path[i]);
+			// printf("working path: %s\n", current_path[i]);
 			return (get_correct_path(current_path[i], cmd));
 		}
 		i++;

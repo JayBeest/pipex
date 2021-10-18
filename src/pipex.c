@@ -26,10 +26,12 @@ int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 {
 	int		fd;
 
+	printf("cmd2_parent_fork pid: %d, ppid: %d\n", getpid(), getppid());
+
 	close(pipe_fd[1]);
 //	if (access(OUTFILE, F_OK | W_OK) == -1)
 //	 	return (printf("noooooooo no access_OUTFILE!\n"));
-	fd = open(OUTFILE, O_RDWR | O_CREAT);
+	fd = open(OUTFILE, O_RDWR | O_CREAT, 0662);
 	if (fd == -1)
 		return (printf("ooooohnoo, open_OUTFILE failed\n"));
 	if (dup2(fd, STDOUT_FILENO) == -1)
@@ -38,7 +40,7 @@ int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 		return (printf("fuck your dup2_stdout :/\n"));
 	close (pipe_fd[0]);
-	wait(NULL);
+	printf("check\n");
  	execv(cmd.cmd2, splits->cmd2_split);
 	return (0);
 }
@@ -46,6 +48,8 @@ int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 {
 	int	fd;
+
+	printf("cmd1_chid_fork pid: %d, ppid: %d\n", getpid(), getppid());
 
 	close(pipe_fd[0]);
 	if (access(INFILE, F_OK | R_OK) == -1)
@@ -83,7 +87,7 @@ int	create_splits(char **argv, char **envp, t_splits *splits, t_cmds *commands)
 
 int	main(int argc, char **argv, char **envp)
 {
-	int			pid;
+	int			pid[2];
 	int			pipe_fd[2];
 	t_splits	splits;
 	t_cmds		commands;
@@ -93,26 +97,43 @@ int	main(int argc, char **argv, char **envp)
 //	print_split(envp);
 //	check_access(INFILE);
 	ft_bzero(&splits, sizeof(splits));
-
 	if (create_splits(argv, envp, &splits, &commands) != 0)
 		return (printf("mis_split!\n"));
 	if (pipe(pipe_fd) == -1)
 		return (printf("creating pipe failed! :(\n"));
-	pid = fork();
-	if (pid == -1)
-		return (printf("forking failed :(((\n"));
-	if (pid == 0)
+	pid[0] = fork();
+	if (pid[0] == -1)
+		return (printf("fork[0] failed :(((\n"));
+	if (pid[0] == 0)
+	{
 		cmd1_child_fork(argv, pipe_fd, &splits, commands);
+	}
 	else
 	{
-		cmd2_parent_fork(argv, pipe_fd, &splits, commands);
-		free_t_splits(splits);
+		// int	wait_return;
+		// wait_return = wait(NULL);
+		// printf("wait_return main1 = %d\n", wait_return);
+		printf("child_ID[0]? %d\n", pid[0]);
+		int	wait_return2;
+		int	wait_return;
+		wait_return2 = wait(NULL);
+		printf("wait_return main1 = %d\n", wait_return2);
+		pid[1] = fork();
+		if (pid[1] == -1)
+			return (printf("fork[1] failed :(((\n"));
+		if (pid[1] == 0)
+			cmd2_parent_fork(argv, pipe_fd, &splits, commands);
+		else if (pid[0] != 0 && pid[1] != 0)
+		{
+			printf("child_ID[1]? %d\n", pid[1]);
+			wait_return = wait(NULL);
+			printf("wait_return main2 = %d\n", wait_return);
+			free_t_splits(&splits);
+		}
+		
+		// wait_return = wait(NULL);
+		// printf("wait_return main = %d\n", wait_return);
+		// printf("about to free splits !!!! \n");
 	}
-	// if (pid == 0)
-	// 	close(pipe_fd[1]);
-	// else
-	// 	close(pipe_fd[0]);
-
-//	system("leaks pipex");
 	return (0);
 }
