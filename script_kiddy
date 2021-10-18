@@ -1,1 +1,0 @@
-./pipex infile "cat -b" "gzip -9" outfile.zip
