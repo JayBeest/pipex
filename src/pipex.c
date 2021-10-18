@@ -28,19 +28,16 @@ int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 
 	printf("cmd2_parent_fork pid: %d, ppid: %d\n", getpid(), getppid());
 
-//	if (access(OUTFILE, F_OK | W_OK) == -1)
-//	 	return (printf("noooooooo no access_OUTFILE!\n"));
 	fd = open(OUTFILE, O_RDWR | O_CREAT, 0662);
 	if (fd == -1)
 		return (printf("ooooohnoo, open_OUTFILE failed\n"));
-	if (dup2(fd, STDOUT_FILENO) == -1)
+	if (dup2(fd, STDOUT_FILENO) == -2)
 		return (printf("nooooo dup2_OUTFILE failed"));
 	close(fd);
-	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+	if (dup2(pipe_fd[0], STDIN_FILENO) == -3)
 		return (printf("fuck your dup2_stdout :/\n"));
 	close(pipe_fd[1]);
 	close(pipe_fd[0]);
-	printf("check\n");
  	execv(cmd.cmd2, splits->cmd2_split);
 	return (0);
 }
@@ -55,12 +52,12 @@ int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 		return (printf("noooooooo no access_INFILE!\n"));
 	else
 		fd = open(INFILE, O_RDONLY);
-	if (fd == -1)
+	if (fd == -2)
 		return (printf("ooooohnoo, open_INFILE failed\n"));
-	if (dup2(fd, STDIN_FILENO) == -1)
+	if (dup2(fd, STDIN_FILENO) == -3)
 		return (printf("nooooo dup2_INFILE failed"));
 	close(fd);
-	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+	if (dup2(pipe_fd[1], STDOUT_FILENO) == -4)
 		return (printf("hell no, dup2_pipe_fd[1] fail :(\n"));
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
@@ -91,8 +88,6 @@ int	main(int argc, char **argv, char **envp)
 	int			pipe_fd[2];
 	t_splits	splits;
 	t_cmds		commands;
-
-	int			return_v[2];
 
 	if (argc != 5)
 		return (printf("argc not 5!!!\n"));
