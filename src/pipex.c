@@ -28,7 +28,6 @@ int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 
 	printf("cmd2_parent_fork pid: %d, ppid: %d\n", getpid(), getppid());
 
-	close(pipe_fd[1]);
 //	if (access(OUTFILE, F_OK | W_OK) == -1)
 //	 	return (printf("noooooooo no access_OUTFILE!\n"));
 	fd = open(OUTFILE, O_RDWR | O_CREAT, 0662);
@@ -39,7 +38,8 @@ int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 	close(fd);
 	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 		return (printf("fuck your dup2_stdout :/\n"));
-	close (pipe_fd[0]);
+	close(pipe_fd[1]);
+	close(pipe_fd[0]);
 	printf("check\n");
  	execv(cmd.cmd2, splits->cmd2_split);
 	return (0);
@@ -51,7 +51,6 @@ int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 
 	printf("cmd1_chid_fork pid: %d, ppid: %d\n", getpid(), getppid());
 
-	close(pipe_fd[0]);
 	if (access(INFILE, F_OK | R_OK) == -1)
 		return (printf("noooooooo no access_INFILE!\n"));
 	else
@@ -63,7 +62,8 @@ int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 	close(fd);
 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		return (printf("hell no, dup2_pipe_fd[1] fail :(\n"));
-	close (pipe_fd[1]);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 	execv(cmd.cmd1, ft_split(CMD1, ' '));
 	return (0);
 }
@@ -92,6 +92,8 @@ int	main(int argc, char **argv, char **envp)
 	t_splits	splits;
 	t_cmds		commands;
 
+	int			return_v[2];
+
 	if (argc != 5)
 		return (printf("argc not 5!!!\n"));
 //	print_split(envp);
@@ -105,35 +107,24 @@ int	main(int argc, char **argv, char **envp)
 	if (pid[0] == -1)
 		return (printf("fork[0] failed :(((\n"));
 	if (pid[0] == 0)
-	{
 		cmd1_child_fork(argv, pipe_fd, &splits, commands);
-	}
 	else
 	{
-		// int	wait_return;
-		// wait_return = wait(NULL);
-		// printf("wait_return main1 = %d\n", wait_return);
 		printf("child_ID[0]? %d\n", pid[0]);
-		int	wait_return2;
-		int	wait_return;
-		wait_return2 = wait(NULL);
-		printf("wait_return main1 = %d\n", wait_return2);
+		wait(NULL);
 		pid[1] = fork();
 		if (pid[1] == -1)
 			return (printf("fork[1] failed :(((\n"));
 		if (pid[1] == 0)
 			cmd2_parent_fork(argv, pipe_fd, &splits, commands);
-		else if (pid[0] != 0 && pid[1] != 0)
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		if (pid[0] != 0 && pid[1] != 0)
 		{
+			wait(NULL);
 			printf("child_ID[1]? %d\n", pid[1]);
-			wait_return = wait(NULL);
-			printf("wait_return main2 = %d\n", wait_return);
 			free_t_splits(&splits);
 		}
-		
-		// wait_return = wait(NULL);
-		// printf("wait_return main = %d\n", wait_return);
-		// printf("about to free splits !!!! \n");
 	}
 	return (0);
 }
