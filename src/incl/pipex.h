@@ -23,6 +23,8 @@
 # define ENVP_PATH_M1 envp[0]
 # define ENVP_PWD_M1 envp[20]
 
+# define PROCESS_AMOUNT argc - 3
+# define PIPE_AMOUNT argc - 4
 
 #include <stdio.h>
 
@@ -52,11 +54,24 @@ typedef struct	s_cmds
 	char	*cmd2;
 }				t_cmds;
 
-typedef struct s_heap_data
+typedef struct s_heap
 {
-
-	t_splits	split;
+	t_splits	splits;
 	t_cmds		commands;
-}				t_heap_data;
+}				t_heap;
+
+typedef struct s_arguments
+{
+	int		argc;
+	char	**argv;
+	char	**envp;
+}				t_arguments;
+
+typedef struct s_fork_info
+{
+	int	rv;
+	int	pid[500];
+	int	fd[500][2];
+}				t_fork_info;
 
 #endif

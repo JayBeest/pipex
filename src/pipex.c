@@ -31,10 +31,10 @@ int	cmd2_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 	fd = open(OUTFILE, O_RDWR | O_CREAT, 0662);
 	if (fd == -1)
 		return (printf("ooooohnoo, open_OUTFILE failed\n"));
-	if (dup2(fd, STDOUT_FILENO) == -2)
+	if (dup2(fd, STDOUT_FILENO) == -1)
 		return (printf("nooooo dup2_OUTFILE failed"));
 	close(fd);
-	if (dup2(pipe_fd[0], STDIN_FILENO) == -3)
+	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 		return (printf("fuck your dup2_stdout :/\n"));
 	close(pipe_fd[1]);
 	close(pipe_fd[0]);
@@ -48,15 +48,15 @@ int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 
 	printf("cmd1_child_fork pid: %d, ppid: %d\n", getpid(), getppid());
 
-	if (dup2(pipe_fd[1], STDOUT_FILENO) == -4)
+	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		return (printf("hell no, dup2_pipe_fd[1] fail :(\n"));
 	if (access(INFILE, F_OK | R_OK) == -1)
 		return (printf("noooooooo no access_INFILE!\n"));
 	else
 		fd = open(INFILE, O_RDONLY);
-	if (fd == -2)
+	if (fd == -1)
 		return (printf("ooooohnoo, open_INFILE failed\n"));
-	if (dup2(fd, STDIN_FILENO) == -3)
+	if (dup2(fd, STDIN_FILENO) == -1)
 		return (printf("nooooo dup2_INFILE failed"));
 	close(fd);
 	close(pipe_fd[0]);
@@ -123,34 +123,105 @@ int	main2(int argc, char **argv, char **envp)
 	return (0);
 }
 
-int	create_pipes(int pipe_fd[][2], int pipe_amount)
+int	create_pipes(int (*pipe_fd)[500][2], int pipe_amount)
 {
 	int	i;
 
 	i = 0;
 	while (i < pipe_amount)
 	{
-		pipe(pipe_fd[i]);
+		if (pipe((*pipe_fd)[i]) == -1)
+			return (-1);
 		i++;
 	}
+	i = 0;
+	while (i < pipe_amount)
+	{
+		printf("fd[%d][0] = %2d  fd[%d][1] = %2d\n", i, (*pipe_fd)[i][0], i, (*pipe_fd)[i][1]);
+		i++;
+	}
+	return (0);
+}
 
+int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
+{
+	int	fd;
+
+	*pid = fork();
+	if (*pid == -1)
+		return (-1);
+	if (*pid == 0)
+		{
+			close(pipe_fd1[0]);
+			if (dup2(pipe_fd1[1], STDOUT_FILENO) == -1)
+				return (1);
+			close(pipe_fd1[1]);
+			fd = open("infile", O_RDONLY);
+			if (fd == -1)
+				return (2);
+			if (dup2(fd, STDIN_FILENO) == -1)
+				return (3);
+			close(fd);
+			printf("start_child %d here->fd1[0] = %2d fd1[1] = %2d\n", getpid(), pipe_fd1[0], pipe_fd1[1]);
+			execv(heap->commands.cmd1, heap->splits.cmd1_split);
+		}
+	return (0);
+}
+
+int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
+{
+	*pid = fork();
+	if (*pid == -1)
+		return (-1);
+	if (*pid == 0)
+		{
+			printf("end_child   %d here->fd2[0] = %2d fd2[1] = %2d\n", getpid(), pipe_fd2[0], pipe_fd2[1]);
+		}
+	return (0);
+}
+
+int	fork_mid(int pipe_fd1[2], int pipe_fd2[2], int *pid, t_heap *heap)
+{
+	*pid = fork();
+	if (*pid == -1)
+		return (-1);
+	if (*pid == 0)
+		{
+			printf("mid_child   %d here->fd1[0] = %2d fd1[1] = %2d  fd2[0] = %2d fd2[1] = %2d\n", getpid(), pipe_fd1[0], pipe_fd1[1], pipe_fd2[0], pipe_fd2[1]);
+		}
 	return (0);
 }
 
 int main(int argc, char **argv, char **envp)
 {
-	t_heap_data	heap_data;
-	int			pid[500];
-	int			pipe_fd[500][2];
+	t_heap		heap;
+	t_fork_info	fork_info;
 	int			i;
 
-	ft_bzero(&heap_data, sizeof(heap_data));
-	i = 0;
-	if (create_pipes(&pipe_fd[0], argc - 4) == -1)
+	ft_bzero(&heap, sizeof(heap));
+	if (create_pipes(&fork_info.fd, PIPE_AMOUNT) == -1)
 		return (1);
-	while (i < argc - 1)
-	{
 
+	if (create_splits(argv, envp, &heap.splits, &heap.commands) != 0)
+		return (printf("mis_split!\n"));
+
+	i = 0;
+	while (i < PROCESS_AMOUNT)
+	{
+		if (i == 0)
+			fork_info.rv = fork_start(fork_info.fd[i], &fork_info.pid[i], &heap);
+		else if (i == PROCESS_AMOUNT - 1)
+			fork_info.rv = fork_end(fork_info.fd[i - 1], &fork_info.pid[i], &heap);
+		else
+			fork_info.rv = fork_mid(fork_info.fd[i - 1], fork_info.fd[i], &fork_info.pid[i], &heap);
+		if (fork_info.rv == -1)
+			return (2);
+		if (fork_info.pid[i] == 0)
+			break ;
 		i++;
 	}
+	if (fork_info.pid[0] != 0)
+		// system("lsof -F cft0 -c pipex");
+	// wait_and_close_lop(&pid, argc);
+	return (0);
 }
