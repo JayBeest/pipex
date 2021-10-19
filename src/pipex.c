@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/16 19:55:55 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/18 21:37:51 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int	cmd2_parent_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
+int	cmd2_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 {
 	int		fd;
 
@@ -46,8 +46,10 @@ int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 {
 	int	fd;
 
-	printf("cmd1_chid_fork pid: %d, ppid: %d\n", getpid(), getppid());
+	printf("cmd1_child_fork pid: %d, ppid: %d\n", getpid(), getppid());
 
+	if (dup2(pipe_fd[1], STDOUT_FILENO) == -4)
+		return (printf("hell no, dup2_pipe_fd[1] fail :(\n"));
 	if (access(INFILE, F_OK | R_OK) == -1)
 		return (printf("noooooooo no access_INFILE!\n"));
 	else
@@ -57,8 +59,6 @@ int	cmd1_child_fork(char **argv, int pipe_fd[2], t_splits *splits, t_cmds cmd)
 	if (dup2(fd, STDIN_FILENO) == -3)
 		return (printf("nooooo dup2_INFILE failed"));
 	close(fd);
-	if (dup2(pipe_fd[1], STDOUT_FILENO) == -4)
-		return (printf("hell no, dup2_pipe_fd[1] fail :(\n"));
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	execv(cmd.cmd1, ft_split(CMD1, ' '));
@@ -72,17 +72,17 @@ int	create_splits(char **argv, char **envp, t_splits *splits, t_cmds *commands)
 		return (printf("cmd1_split fail\n"));
 	splits->cmd2_split = ft_split(CMD2, ' ');
 	if (splits->cmd1_split == NULL)
-		return (printf("cmd1_split fail\n"));
+		return (printf("cmd2_split fail\n"));
 	commands->cmd1 = find_and_set_path(splits->cmd1_split[0], envp, splits);
 	if (commands->cmd1 == NULL)
 		return (printf("cmd1 fail!\n"));
 	commands->cmd2 = find_and_set_path(splits->cmd2_split[0], envp, splits);
 	if (commands->cmd2 == NULL)
-		return (printf("cmd1 fail!\n"));
+		return (printf("cmd2 fail!\n"));
 	return (0);
 }
 
-int	main(int argc, char **argv, char **envp)
+int	main2(int argc, char **argv, char **envp)
 {
 	int			pid[2];
 	int			pipe_fd[2];
@@ -106,20 +106,51 @@ int	main(int argc, char **argv, char **envp)
 	else
 	{
 		printf("child_ID[0]? %d\n", pid[0]);
-		wait(NULL);
 		pid[1] = fork();
 		if (pid[1] == -1)
 			return (printf("fork[1] failed :(((\n"));
 		if (pid[1] == 0)
-			cmd2_parent_fork(argv, pipe_fd, &splits, commands);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+			cmd2_child_fork(argv, pipe_fd, &splits, commands);
 		if (pid[0] != 0 && pid[1] != 0)
 		{
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
 			wait(NULL);
-			printf("child_ID[1]? %d\n", pid[1]);
+			wait(NULL);
 			free_t_splits(&splits);
 		}
 	}
 	return (0);
+}
+
+int	create_pipes(int pipe_fd[][2], int pipe_amount)
+{
+	int	i;
+
+	i = 0;
+	while (i < pipe_amount)
+	{
+		pipe(pipe_fd[i]);
+		i++;
+	}
+
+	return (0);
+}
+
+int main(int argc, char **argv, char **envp)
+{
+	t_heap_data	heap_data;
+	int			pid[500];
+	int			pipe_fd[500][2];
+	int			i;
+
+	ft_bzero(&heap_data, sizeof(heap_data));
+	i = 0;
+	if (create_pipes(&pipe_fd[0], argc - 4) == -1)
+		return (1);
+	while (i < argc - 1)
+	{
+
+		i++;
+	}
 }

@@ -1,6 +1,7 @@
 NAME = 		pipex
 SRC = 		pipex.c \
 			utils.c \
+			parser.c \
 			debug.c
 SRC_DIR =	src
 OBJ_DIR	= 	$(SRC_DIR)/obj

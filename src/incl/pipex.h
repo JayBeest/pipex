@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/15 15:22:46 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/18 21:34:54 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,12 @@ typedef struct	s_cmds
 	char	*cmd1;
 	char	*cmd2;
 }				t_cmds;
+
+typedef struct s_heap_data
+{
+
+	t_splits	split;
+	t_cmds		commands;
+}				t_heap_data;
 
 #endif
