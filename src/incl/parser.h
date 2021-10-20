@@ -13,6 +13,10 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-int	parser(char *argc, char **argv, t_heap_data *heap);
+
+#include <pipex.h>
+
+
+int	parse_input(int argc, char **argv, char **envp, t_pipex *pipex);
 
 #endif

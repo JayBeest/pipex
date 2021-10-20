@@ -26,6 +26,8 @@
 # define PROCESS_AMOUNT argc - 3
 # define PIPE_AMOUNT argc - 4
 
+# define MAX_COMMANDS 512
+
 #include <stdio.h>
 
 
@@ -43,36 +45,30 @@ typedef enum	e_errno
 
 typedef struct	s_splits
 {
-	char **cmd1_split;
-	char **cmd2_split;
+	char **cmd_split[MAX_COMMANDS];
 	char **path_split;
 }				t_splits;
 
-typedef struct	s_cmds
-{
-	char	*cmd1;
-	char	*cmd2;
-}				t_cmds;
-
 typedef struct s_heap
 {
+	int			i;
 	t_splits	splits;
-	t_cmds		commands;
+	char		*command[MAX_COMMANDS];
 }				t_heap;
 
-typedef struct s_arguments
-{
-	int		argc;
-	char	**argv;
-	char	**envp;
-}				t_arguments;
+// typedef struct s_arguments
+// {
+// 	int		argc;
+// 	char	**argv;
+// 	char	**envp;
+// }				t_arguments;
 
 typedef struct s_fork_info
 {
 	int	rv;
-	int last_child;
-	int	pid[500];
-	int	fd[500][2];
+	// int last_child_id;
+	int	pid[MAX_COMMANDS];
+	int	fd[MAX_COMMANDS][2];
 }				t_fork_info;
 
 typedef struct s_pipex

@@ -19,68 +19,48 @@
 
 #define OK 0
 
-char	**create_path_split(char **envp)
+void	free_heap(t_heap *heap)
 {
-	char	*curr_envp;
-	int		i;
+	int	i;
 
 	i = 0;
-	while (envp && envp[i])
+	while (heap->command[i] && i < MAX_COMMANDS)
 	{
-		curr_envp = ft_strnstr(envp[i], "PATH=", 5);
-		if (curr_envp)
-			break;
+		free(heap->command[i]);
+		heap->command[i] = NULL;
 		i++;
 	}
-	return (ft_split(curr_envp + 5, ':'));
-}
-
-void	free_t_splits(t_splits *splits)
-{
-	if (splits->path_split)
-		ft_free_split(splits->path_split);
-	// if (splits->cmd1_split)
-	// 	ft_free_split(splits->path_split);
-	if (splits->cmd2_split)
-		ft_free_split(splits->cmd2_split);
-}
-
-char	*get_correct_path(char *current_path, char *cmd)
-{
-	char	*full_cmd;
-	char	*path;
-
-	path = ft_strjoin(current_path, "/");
-	full_cmd = ft_strjoin(path, cmd);
-	// printf("checking current path->%s\n", full_cmd);
-	if (access(full_cmd, X_OK) == OK)
+	i = 0;
+	while (heap->splits.cmd_split[i] && i < MAX_COMMANDS)
 	{
-		free(path);
-		return (full_cmd);
+		ft_free_split(heap->splits.cmd_split[i]);
+		heap->splits.cmd_split[i] = NULL;
+		i++;
 	}
-	free(full_cmd);
-	free(path);
-	return (NULL);
+	if (heap->splits.path_split)
+	{
+		ft_free_split(heap->splits.path_split);
+		heap->splits.path_split = NULL;
+	}
 }
 
-char	*find_and_set_path(char *cmd, char **envp, t_splits *splits)
+void	close_wait_and_free(t_pipex *pipex)
 {
-	char	**current_path;
-	int		i;
+	int i;
 
 	i = 0;
-	splits->path_split = create_path_split(envp);
-	if (!splits->path_split)
-		return (NULL);
-	current_path = splits->path_split;
-	while (current_path[i])
+	while (i < pipex->pipe_amount - 1)
 	{
-		if (get_correct_path(current_path[i], cmd))
-		{
-			// printf("working path: %s\n", current_path[i]);
-			return (get_correct_path(current_path[i], cmd));
-		}
+		close(pipex->fork_info.fd[i][0]);
+		close(pipex->fork_info.fd[i][1]);
 		i++;
 	}
-	return (NULL);
+	i = 0;
+	while (i < pipex->process_amount - 1)
+	{
+		wait(NULL);
+		i++;
+	}
+	system("lsof -F cft0 -c pipex");
+	free_heap(&pipex->heap);
 }
