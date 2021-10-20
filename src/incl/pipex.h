@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/18 21:34:54 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/20 01:37:31 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,17 @@ typedef struct s_arguments
 typedef struct s_fork_info
 {
 	int	rv;
+	int last_child;
 	int	pid[500];
 	int	fd[500][2];
 }				t_fork_info;
 
+typedef struct s_pipex
+{
+	int 		process_amount;
+	int 		pipe_amount;
+	t_heap		heap;
+	t_fork_info	fork_info;
+
+}				t_pipex;
 #endif

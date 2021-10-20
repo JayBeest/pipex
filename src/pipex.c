@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/18 21:37:51 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/20 03:13:58 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
 		return (-1);
 	if (*pid == 0)
 		{
+			printf("start_child %d here->fd1[0] = %2d fd1[1] = %2d\n", getpid(), pipe_fd1[0], pipe_fd1[1]);
 			close(pipe_fd1[0]);
 			if (dup2(pipe_fd1[1], STDOUT_FILENO) == -1)
 				return (1);
@@ -162,13 +163,12 @@ int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
 			if (dup2(fd, STDIN_FILENO) == -1)
 				return (3);
 			close(fd);
-			printf("start_child %d here->fd1[0] = %2d fd1[1] = %2d\n", getpid(), pipe_fd1[0], pipe_fd1[1]);
 			execv(heap->commands.cmd1, heap->splits.cmd1_split);
 		}
 	return (0);
 }
 
-int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
+int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap, int *last_pid)
 {
 	*pid = fork();
 	if (*pid == -1)
@@ -177,6 +177,8 @@ int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
 		{
 			printf("end_child   %d here->fd2[0] = %2d fd2[1] = %2d\n", getpid(), pipe_fd2[0], pipe_fd2[1]);
 		}
+	else
+		*last_pid = *pid;
 	return (0);
 }
 
@@ -192,36 +194,57 @@ int	fork_mid(int pipe_fd1[2], int pipe_fd2[2], int *pid, t_heap *heap)
 	return (0);
 }
 
-int main(int argc, char **argv, char **envp)
+int	create_forks(t_pipex *pipex)
 {
-	t_heap		heap;
-	t_fork_info	fork_info;
 	int			i;
+	t_fork_info	*f_info;
 
-	ft_bzero(&heap, sizeof(heap));
-	if (create_pipes(&fork_info.fd, PIPE_AMOUNT) == -1)
-		return (1);
-
-	if (create_splits(argv, envp, &heap.splits, &heap.commands) != 0)
-		return (printf("mis_split!\n"));
-
+	f_info = &pipex->fork_info;
 	i = 0;
-	while (i < PROCESS_AMOUNT)
+	while (i < pipex->process_amount)
 	{
 		if (i == 0)
-			fork_info.rv = fork_start(fork_info.fd[i], &fork_info.pid[i], &heap);
-		else if (i == PROCESS_AMOUNT - 1)
-			fork_info.rv = fork_end(fork_info.fd[i - 1], &fork_info.pid[i], &heap);
+			f_info->rv = fork_start(f_info->fd[i], &f_info->pid[i], &pipex->heap);
+		else if (i == pipex->process_amount - 1)
+			f_info->rv = fork_end(f_info->fd[i - 1], &f_info->pid[i], &pipex->heap, &pipex->fork_info.last_child);
 		else
-			fork_info.rv = fork_mid(fork_info.fd[i - 1], fork_info.fd[i], &fork_info.pid[i], &heap);
-		if (fork_info.rv == -1)
-			return (2);
-		if (fork_info.pid[i] == 0)
+			f_info->rv = fork_mid(f_info->fd[i - 1], f_info->fd[i], &f_info->pid[i], &pipex->heap);
+		if (f_info->rv == -1)
+			return (-1);
+		if (f_info->pid[i] == 0)
 			break ;
 		i++;
 	}
-	if (fork_info.pid[0] != 0)
-		// system("lsof -F cft0 -c pipex");
+	return (0);
+}
+
+int main(int argc, char **argv, char **envp)
+{
+//	t_heap		heap;
+//	t_fork_info	fork_info;
+	t_pipex		pipex;
+	int			i;
+
+	ft_bzero(&pipex, sizeof(pipex));
+	pipex.process_amount = argc - 3;
+	pipex.pipe_amount = argc - 4;
+//	if (parse_input(argc, argv, envp) == -1)
+//		return (1);
+	if (create_splits(argv, envp, &pipex.heap.splits, &pipex.heap.commands) != 0)
+		return (printf("mis_split!\n"));
+
+	if (create_pipes(&pipex.fork_info.fd, PIPE_AMOUNT) == -1)
+		return (2);
+	if (create_forks(&pipex) == -1)
+		return (3);
+	i = 0;
+	while (i < pipex.process_amount && pipex.fork_info.pid[i] != 0)
+		i++;
+	if (i == pipex.process_amount)
+	{
+		printf("last child's own pid (from parent :P)->%d\n", pipex.fork_info.last_child);
+//		 system("lsof -F cft0 -c pipex");
+	}
 	// wait_and_close_lop(&pid, argc);
 	return (0);
 }
