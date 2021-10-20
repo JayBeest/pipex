@@ -41,3 +41,6 @@ void	check_access(char *file)
 	if (access(file, F_OK | R_OK) == 0)
 		printf("F_OK | R_OK\n");
 }
+
+void	print_heap_index(void)
+{}
