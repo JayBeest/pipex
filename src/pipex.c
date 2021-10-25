@@ -126,7 +126,7 @@
 // 	return (0);
 // }
 
-int	create_pipes(int (*pipe_fd)[MAX_COMMANDS][2], int (*dupe_fd)[MAX_COMMANDS][2], int pipe_amount)
+int	create_pipes(int (*pipe_fd)[MAX_COMMANDS][2], int pipe_amount)
 {
 	int	i;
 
@@ -156,7 +156,7 @@ int main(int argc, char **argv, char **envp)
 	ft_bzero(&pipex, sizeof(pipex));
 	if (parse_input(argc, argv, envp, &pipex) != 0)
 		return (1);
-	if (create_pipes(&pipex.fork_info.fd, &pipex.fork_info.duped_fd, pipex.pipe_amount) != 0)
+	if (create_pipes(&pipex.fork_info.fd, pipex.pipe_amount) != 0)
 		return (2);
 	if (create_forks(&pipex) != 0)
 		return (3);
