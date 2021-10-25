@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/18 21:30:46 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/26 00:05:25 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,18 @@ int	create_cmd_split(char *cmd_arg, char ***cmd_split)
 		return (-1);
 }
 
+int	parse_files(char *in_arg, char *out_arg, char **infile, char **outfile)
+{
+	if (access(in_arg, R_OK) != OK)
+		return (1);
+	*infile = ft_strdup(in_arg);
+	if (access(out_arg, F_OK | W_OK) == OK || access(out_arg, F_OK) != OK)
+		*outfile = ft_strdup(out_arg);
+	else
+		return (2);
+	return (0);
+}
+
 int	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 {
 	int	i;
@@ -75,8 +87,9 @@ int	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 	pipex->pipe_amount = argc - 4;
 	if (create_path_split(envp, &pipex->heap.splits.path_split) == -1)
 		return (1);
-	// if (parse_infile(argv[1], &pipex->heap.splits) == -1)
-	// 	return (2);
+	if (parse_files(argv[1], argv[argc - 1], &pipex->heap.infile, &pipex->heap.outfile) != 0)
+	 	return (2);
+	printf("infile = %s\noutfile = %s\n", pipex->heap.infile, pipex->heap.outfile);
 	i = 2;
 	while (i < argc - 1)
 	{

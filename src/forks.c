@@ -19,7 +19,7 @@ static int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
 			if (dup2(pipe_fd1[1], STDOUT_FILENO) == -1)
 				return (1);
 			close(pipe_fd1[1]);
-			fd = open("infile", O_RDONLY);
+			fd = open(heap->infile, O_RDONLY);
 			if (fd == -1)
 				return (2);
 			if (dup2(fd, STDIN_FILENO) == -1)
@@ -44,7 +44,7 @@ static int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
 			if (dup2(pipe_fd2[0], STDIN_FILENO) == -1)
 				return (1);
 			close(pipe_fd2[0]);
-			fd = open("outfiles", O_CREAT | O_WRONLY, 0666);
+			fd = open(heap->outfile, O_CREAT | O_WRONLY, 0666);
 			if (fd == -1)
 				return (2);
 			if (dup2(fd, STDOUT_FILENO) == -1)

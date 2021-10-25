@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/20 01:37:31 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/25 23:55:23 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,22 +41,15 @@ typedef struct s_heap
 	int			i;
 	t_splits	splits;
 	char		*command[MAX_COMMANDS];
+	char 		*infile;
+	char 		*outfile;
 }				t_heap;
-
-// typedef struct s_arguments
-// {
-// 	int		argc;
-// 	char	**argv;
-// 	char	**envp;
-// }				t_arguments;
 
 typedef struct s_fork_info
 {
 	int	rv;
-	// int last_child_id;
 	int	pid[MAX_COMMANDS];
 	int	fd[MAX_COMMANDS][2];
-	int	duped_fd[MAX_COMMANDS][2];
 }				t_fork_info;
 
 typedef struct s_pipex

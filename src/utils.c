@@ -25,7 +25,7 @@ void	close_pipe(int fd[2])
 	close(fd[1]);
 }
 
-void	free_heap(t_heap *heap)
+void	free_strings(t_heap *heap)
 {
 	int	i;
 
@@ -36,6 +36,22 @@ void	free_heap(t_heap *heap)
 		heap->command[i] = NULL;
 		i++;
 	}
+	if (heap->infile)
+	{
+		free(heap->infile);
+		heap->infile = NULL;
+	}
+	if (heap->outfile)
+	{
+		free(heap->outfile);
+		heap->outfile = NULL;
+	}
+}
+
+void	free_heap(t_heap *heap)
+{
+	int	i;
+
 	i = 0;
 	while (heap->splits.cmd_split[i] && i < MAX_COMMANDS)
 	{
@@ -48,6 +64,7 @@ void	free_heap(t_heap *heap)
 		ft_free_split(heap->splits.path_split);
 		heap->splits.path_split = NULL;
 	}
+	free_strings(heap);
 }
 
 void	wait_and_free(t_pipex *pipex)
