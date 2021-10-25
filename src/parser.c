@@ -16,6 +16,8 @@
 #include <pipex.h>
 #include <path.h>
 
+#include <debug.h>
+
 #define OK 0
 
 char	*correct_path(char *current_path, char *cmd)
@@ -25,7 +27,7 @@ char	*correct_path(char *current_path, char *cmd)
 
 	path = ft_strjoin(current_path, "/");
 	full_cmd = ft_strjoin(path, cmd);
-	// printf("checking current path->%s\n", full_cmd);
+	printf("checking current path->%s\n", full_cmd);
 	if (access(full_cmd, X_OK) == OK)
 	{
 		free(path);
@@ -36,14 +38,14 @@ char	*correct_path(char *current_path, char *cmd)
 	return (NULL);
 }
 
-int	check_set_command(char *cmd_arg, char **cmd_split, char **full_cmd)
+int	check_set_command(char *cmd_arg, char **path_split, char **full_cmd)
 {
 	int		i;
 
 	i = 0;
-	while (cmd_split[i])
+	while (path_split[i])
 	{
-		*full_cmd = correct_path(cmd_split[i], cmd_arg);
+		*full_cmd = correct_path(path_split[i], cmd_arg);
 		if (*full_cmd)
 		{
 			// printf("working path: %s\n", current_path[i]);
@@ -54,10 +56,12 @@ int	check_set_command(char *cmd_arg, char **cmd_split, char **full_cmd)
 	return (-1);
 }
 
-int	create_cmd_split(char *cmd_arg, char ***path_split)
+int	create_cmd_split(char *cmd_arg, char ***cmd_split)
 {
-	*path_split = ft_split(cmd_arg, ' ');
-	if (*path_split)
+	// printf("create_cmd_split->cmd_arg= %s\n", cmd_arg);
+	*cmd_split = ft_split(cmd_arg, ' ');
+	// print_split(*path_split);
+	if (*cmd_split)
 		return (0);
 	else
 		return (-1);
@@ -76,10 +80,10 @@ int	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 	i = 2;
 	while (i < argc - 1)
 	{
-		if (create_cmd_split(argv[i], &pipex->heap.splits.cmd_split[i]) == -1)
+		if (create_cmd_split(argv[i], &pipex->heap.splits.cmd_split[i - 2]) == -1)
 			return (3);
-		if (check_set_command(argv[i], pipex->heap.splits.cmd_split[i], &pipex->heap.command[i]) == -1)
-			return (4);
+		if (check_set_command(pipex->heap.splits.cmd_split[i - 2][0], pipex->heap.splits.path_split, &pipex->heap.command[i - 2]) == -1)
+			return (printf("CHECK_SET_CMD FAIL!!!!!\n"));;
 		i++;
 	}
 	return (0);

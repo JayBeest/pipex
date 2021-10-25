@@ -1,6 +1,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <pipex.h>
+#include <utils.h>
+
+#include <debug.h>
 
 static int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
 {
@@ -41,7 +44,7 @@ static int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
 			if (dup2(pipe_fd2[0], STDIN_FILENO) == -1)
 				return (1);
 			close(pipe_fd2[0]);
-			fd = open("outfile", O_CREAT | O_WRONLY, 0666);
+			fd = open("outfiles", O_CREAT | O_WRONLY, 0666);
 			if (fd == -1)
 				return (2);
 			if (dup2(fd, STDOUT_FILENO) == -1)
@@ -49,6 +52,8 @@ static int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
 			close(fd);
 			execv(heap->command[heap->i], heap->splits.cmd_split[heap->i]);
 		}
+	else
+		close_pipe(pipe_fd2);
 	return (0);
 }
 
@@ -66,11 +71,12 @@ static int	fork_mid(int pipe_fd1[2], int pipe_fd2[2], int *pid, t_heap *heap)
 			close(pipe_fd1[0]);
 			close(pipe_fd2[0]);
 			if (dup2(pipe_fd2[1], STDOUT_FILENO) == -1)
-				return (2);
+				return (printf("dup2failinmid\n"));
 			close(pipe_fd2[1]);
 			execv(heap->command[heap->i], heap->splits.cmd_split[heap->i]);
-			printf("HHIOO:HIDFHO:DFDF\n");
 		}
+	else
+		close_pipe(pipe_fd1);
 	return (0);
 }
 
@@ -89,8 +95,8 @@ int	create_forks(t_pipex *pipex)
 			f_info->rv = fork_end(f_info->fd[*i - 1], &f_info->pid[*i], &pipex->heap);
 		else
 			f_info->rv = fork_mid(f_info->fd[*i - 1], f_info->fd[*i], &f_info->pid[*i], &pipex->heap);
-		if (f_info->rv == -1)
-			return (-1);
+		if (f_info->rv != 0)
+			return (printf("forkerror!?!?!?!?!?!\n"));
 		if (f_info->pid[*i] == 0)
 			break ;
 		*i = *i + 1;

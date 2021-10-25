@@ -13,19 +13,6 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# define INFILE argv[1]
-# define CMD1 argv[2]
-# define CMD2 argv[3]
-# define OUTFILE argv[4]
-
-# define ENVP_PATH_CODAM envp[6]
-# define ENVP_PWD_CODAM envp[14]
-# define ENVP_PATH_M1 envp[0]
-# define ENVP_PWD_M1 envp[20]
-
-# define PROCESS_AMOUNT argc - 3
-# define PIPE_AMOUNT argc - 4
-
 # define MAX_COMMANDS 512
 
 #include <stdio.h>
@@ -69,6 +56,7 @@ typedef struct s_fork_info
 	// int last_child_id;
 	int	pid[MAX_COMMANDS];
 	int	fd[MAX_COMMANDS][2];
+	int	duped_fd[MAX_COMMANDS][2];
 }				t_fork_info;
 
 typedef struct s_pipex

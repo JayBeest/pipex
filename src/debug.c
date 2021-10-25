@@ -42,5 +42,9 @@ void	check_access(char *file)
 		printf("F_OK | R_OK\n");
 }
 
-void	print_heap_index(void)
-{}
+void	print_heap_index(t_heap *heap, int index)
+{
+	printf("*** PRINTING HEAP FOR INDEX: %d ***\n", index);
+	printf("Command = |%s|\n", heap->command[index]);
+	print_split(heap->splits.cmd_split[index]);
+}

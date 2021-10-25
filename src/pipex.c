@@ -126,7 +126,7 @@
 // 	return (0);
 // }
 
-int	create_pipes(int (*pipe_fd)[MAX_COMMANDS][2], int pipe_amount)
+int	create_pipes(int (*pipe_fd)[MAX_COMMANDS][2], int (*dupe_fd)[MAX_COMMANDS][2], int pipe_amount)
 {
 	int	i;
 
@@ -135,6 +135,8 @@ int	create_pipes(int (*pipe_fd)[MAX_COMMANDS][2], int pipe_amount)
 	{
 		if (pipe((*pipe_fd)[i]) == -1)
 			return (-1);
+		// (*dupe_fd)[i][0] = dup((*dupe_fd)[i][0]);
+		// (*dupe_fd)[i][1] = dup((*dupe_fd)[i][1]);
 		i++;
 	}
 	i = 0;
@@ -152,23 +154,19 @@ int main(int argc, char **argv, char **envp)
 	int			i;
 
 	ft_bzero(&pipex, sizeof(pipex));
-	if (parse_input(argc, argv, envp, &pipex) == -1)
+	if (parse_input(argc, argv, envp, &pipex) != 0)
 		return (1);
-	// if (create_splits(argv, envp, &pipex.heap.splits, &pipex.heap.commands) != 0)
-	// 	return (printf("mis_split!\n"));
-	if (create_pipes(&pipex.fork_info.fd, pipex.pipe_amount) == -1)
+	if (create_pipes(&pipex.fork_info.fd, &pipex.fork_info.duped_fd, pipex.pipe_amount) != 0)
 		return (2);
-	if (create_forks(&pipex) == -1)
+	if (create_forks(&pipex) != 0)
 		return (3);
 	i = 0;
 	while (i < pipex.process_amount && pipex.fork_info.pid[i] != 0)
 		i++;
 	if (i == pipex.process_amount)
 	{
-		close_wait_and_free(&pipex);
-
+		wait_and_free(&pipex);
 //		 system("lsof -F cft0 -c pipex");
 	}
-	// wait_and_close_lop(&pid, argc);
 	return (0);
 }

@@ -19,6 +19,12 @@
 
 #define OK 0
 
+void	close_pipe(int fd[2])
+{
+	close(fd[0]);
+	close(fd[1]);
+}
+
 void	free_heap(t_heap *heap)
 {
 	int	i;
@@ -44,23 +50,20 @@ void	free_heap(t_heap *heap)
 	}
 }
 
-void	close_wait_and_free(t_pipex *pipex)
+void	wait_and_free(t_pipex *pipex)
 {
 	int i;
 
 	i = 0;
-	while (i < pipex->pipe_amount - 1)
+	printf("pipe_amount=%d\n", pipex->pipe_amount);
+	printf("process_amount=%d\n", pipex->process_amount);
+	while (i < pipex->process_amount)
 	{
-		close(pipex->fork_info.fd[i][0]);
-		close(pipex->fork_info.fd[i][1]);
+		int wait_rv;
+		wait_rv = wait(NULL);
+		printf("wait_rv=%d\n",wait_rv);
 		i++;
 	}
-	i = 0;
-	while (i < pipex->process_amount - 1)
-	{
-		wait(NULL);
-		i++;
-	}
-	system("lsof -F cft0 -c pipex");
+		system("lsof -F cft0 -c pipex");
 	free_heap(&pipex->heap);
 }
