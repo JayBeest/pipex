@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/20 03:13:58 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/26 00:55:57 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,7 @@ int main(int argc, char **argv, char **envp)
 	t_pipex		pipex;
 	int			i;
 
+	printf("MAIN_PID: %d\n", getpid());
 	ft_bzero(&pipex, sizeof(pipex));
 	if (parse_input(argc, argv, envp, &pipex) != 0)
 		return (1);

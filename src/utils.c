@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/15 17:17:11 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/26 01:03:43 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,14 @@ void	close_pipe(int fd[2])
 	close(fd[1]);
 }
 
+void	ft_delstr(char *str)
+{
+	if (!str)
+		return ;
+	free(str);
+	str = NULL;
+}
+
 void	free_strings(t_heap *heap)
 {
 	int	i;
@@ -36,16 +44,8 @@ void	free_strings(t_heap *heap)
 		heap->command[i] = NULL;
 		i++;
 	}
-	if (heap->infile)
-	{
-		free(heap->infile);
-		heap->infile = NULL;
-	}
-	if (heap->outfile)
-	{
-		free(heap->outfile);
-		heap->outfile = NULL;
-	}
+	ft_delstr(heap->infile);
+	ft_delstr(heap->outfile);
 }
 
 void	free_heap(t_heap *heap)
@@ -81,6 +81,11 @@ void	wait_and_free(t_pipex *pipex)
 		printf("wait_rv=%d\n",wait_rv);
 		i++;
 	}
-		system("lsof -F cft0 -c pipex");
+	system("lsof -F cft0 -c pipex");
+	char *s;
+	s = malloc(100);
+	sprintf(s,"leaks --fullContent %d", getpid());
+	system(s);
 	free_heap(&pipex->heap);
+	system(s);
 }
