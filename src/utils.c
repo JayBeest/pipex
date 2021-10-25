@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/26 01:03:43 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/26 01:13:58 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,6 @@ void	wait_and_free(t_pipex *pipex)
 		printf("wait_rv=%d\n",wait_rv);
 		i++;
 	}
-	system("lsof -F cft0 -c pipex");
-	char *s;
-	s = malloc(100);
-	sprintf(s,"leaks --fullContent %d", getpid());
-	system(s);
+//	system("lsof -F cft0 -c pipex");
 	free_heap(&pipex->heap);
-	system(s);
 }
