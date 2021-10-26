@@ -126,49 +126,16 @@
 // 	return (0);
 // }
 
-int	create_pipes(int (*pipe_fd)[MAX_COMMANDS][2], int pipe_amount)
-{
-	int	i;
-
-	i = 0;
-	while (i < pipe_amount)
-	{
-		if (pipe((*pipe_fd)[i]) == -1)
-			return (-1);
-		// (*dupe_fd)[i][0] = dup((*dupe_fd)[i][0]);
-		// (*dupe_fd)[i][1] = dup((*dupe_fd)[i][1]);
-		i++;
-	}
-	i = 0;
-	while (i < pipe_amount)
-	{
-		printf("fd[%d][0] = %2d  fd[%d][1] = %2d\n", i, (*pipe_fd)[i][0], i, (*pipe_fd)[i][1]);
-		i++;
-	}
-	return (0);
-}
-
 int main(int argc, char **argv, char **envp)
 {
 	t_pipex		pipex;
-	int			i;
 
 	printf("MAIN_PID: %d\n", getpid());
 	ft_bzero(&pipex, sizeof(pipex));
 	if (parse_input(argc, argv, envp, &pipex) != 0)
 		return (1);
-	// if (create_pipes(&pipex.fork_info.fd, pipex.pipe_amount) != 0)
-	// 	return (2);
 	if (create_forks(&pipex) != 0)
 		return (3);
-	i = 0;
-// 	while (i < pipex.process_amount && pipex.fork_info.pid[i] != 0)
-// 		i++;
-// 	if (i == pipex.process_amount)
-// 	{
-// 		wait_and_free(&pipex);
-// //		 system("lsof -F cft0 -c pipex");
-// 	}
 	if (pipex.fork_info.pid != 0)
 		wait_and_free(&pipex);
 	return (0);

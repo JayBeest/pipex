@@ -15,8 +15,6 @@
 #include <libft.h>
 #include <pipex.h>
 
-#include <debug.h>
-
 #define OK 0
 
 void	close_pipe(int fd[2])
@@ -38,7 +36,7 @@ void	free_strings(t_heap *heap)
 	int	i;
 
 	i = 0;
-	while (heap->command[i] && i < MAX_COMMANDS)
+	while (heap->command[i])
 	{
 		free(heap->command[i]);
 		heap->command[i] = NULL;
@@ -53,7 +51,7 @@ void	free_heap(t_heap *heap)
 	int	i;
 
 	i = 0;
-	while (heap->splits.cmd_split[i] && i < MAX_COMMANDS)
+	while (heap->splits.cmd_split[i])
 	{
 		ft_free_split(heap->splits.cmd_split[i]);
 		heap->splits.cmd_split[i] = NULL;
@@ -73,13 +71,13 @@ void	wait_and_free(t_pipex *pipex)
 
 	i = 0;
 	printf("pipe_amount=%d\n", pipex->pipe_amount);
-	printf("process_amount=%d\n", pipex->process_amount);
-	system("lsof -F cft0 -c pipex");
-	while (i < pipex->process_amount)
+	printf("child_amount=%d\n", pipex->child_amount);
+	// system("lsof -F cft0 -c pipex");
+	while (i < pipex->child_amount)
 	{
 		int wait_rv;
 		wait_rv = wait(NULL);
-		system("lsof -F cft0 -c pipex");
+		// system("lsof -F cft0 -c pipex");
 		printf("wait_rv=%d\n",wait_rv);
 		i++;
 	}

@@ -10,12 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+# include <debug.h>
+# include <stdio.h>
+
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# define MAX_COMMANDS 512
-
-#include <stdio.h>
+# define OK 0
+# define MAX_COMMANDS 1024
 
 typedef enum e_fork_type
 {
@@ -44,7 +46,6 @@ typedef struct	s_splits
 
 typedef struct s_heap
 {
-	int			i;
 	t_splits	splits;
 	char		*command[MAX_COMMANDS];
 	char 		*infile;
@@ -53,19 +54,16 @@ typedef struct s_heap
 
 typedef struct s_fork_info
 {
-	int			i;
 	t_fork_type	type;
-	int			rv;
-	int			pids[MAX_COMMANDS];
-	int			fd[MAX_COMMANDS][2];
 	int			pid;
 	int			fd0[2];
 	int 		fd1[2];
+	int			i;
 }				t_fork_info;
 
 typedef struct s_pipex
 {
-	int 		process_amount;
+	int 		child_amount;
 	int 		pipe_amount;
 	t_heap		heap;
 	t_fork_info	fork_info;

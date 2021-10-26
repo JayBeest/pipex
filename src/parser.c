@@ -83,7 +83,7 @@ int	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 {
 	int	i;
 
-	pipex->process_amount = argc - 3;
+	pipex->child_amount = argc - 3;
 	pipex->pipe_amount = argc - 4;
 	if (create_path_split(envp, &pipex->heap.splits.path_split) == -1)
 		return (1);
