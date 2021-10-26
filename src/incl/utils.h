@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #ifndef PIPEX_UTILS_H
-#define PIPEX_UTILS_H
+# define PIPEX_UTILS_H
 
 void	close_pipe(int fd[2]);
 void	wait_and_free(t_pipex *pipex);

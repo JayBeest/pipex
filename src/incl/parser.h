@@ -11,11 +11,9 @@
 /* ************************************************************************** */
 
 #ifndef PARSER_H
-#define PARSER_H
+# define PARSER_H
 
-
-#include <pipex.h>
-
+# include <pipex.h>
 
 int	parse_input(int argc, char **argv, char **envp, t_pipex *pipex);
 
