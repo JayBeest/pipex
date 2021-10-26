@@ -67,7 +67,6 @@ typedef struct s_pipex
 	int 		pipe_amount;
 	t_heap		heap;
 	t_fork_info	fork_info;
-
 }				t_pipex;
 
 typedef int(*t_fork_fun)(int[2], int[2], t_fork_info*, t_heap*);

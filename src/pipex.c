@@ -30,11 +30,18 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex		pipex;
 
 	printf("MAIN_PID: %d\n", getpid());
+	print_split(envp);
 	ft_bzero(&pipex, sizeof(pipex));
 	if (parse_input(argc, argv, envp, &pipex) != 0)
+	{
+		perror(NULL);
 		return (1);
+	}
 	if (create_forks(&pipex) != 0)
+	{
+		perror(NULL);
 		return (3);
+	}
 	if (pipex.fork_info.pid != 0)
 		wait_and_free(&pipex);
 	return (0);
