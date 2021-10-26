@@ -10,13 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_UTILS_H
-# define PIPEX_UTILS_H
+#ifndef UTILS_H
+# define UTILS_H
 
 void	close_pipe(int fd[2]);
-void	wait_and_free(t_pipex *pipex);
-int		create_path_split(char **envp, char ***path_split);
 void	free_heap(t_heap *heap);
-char	*find_and_set_path(char *cmd_ptr, char **envp, t_splits *splits);
+void	wait_and_free(t_pipex *pipex);
 
 #endif

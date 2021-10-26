@@ -67,7 +67,7 @@ void	free_heap(t_heap *heap)
 
 void	wait_and_free(t_pipex *pipex)
 {
-	int status;
+	int	status;
 	int	i;
 
 	status = 0;
