@@ -67,14 +67,18 @@ void	free_heap(t_heap *heap)
 
 void	wait_and_free(t_pipex *pipex)
 {
+	int status;
 	int	i;
 
+	status = 0;
 	i = 0;
 	printf("pipe_amount=%d\n", pipex->pipe_amount);
 	printf("child_amount=%d\n", pipex->child_amount);
 	while (i < pipex->child_amount)
 	{
-		wait(NULL);
+		int wait_rv = wait(&status);
+		if (WIFEXITED(status))
+			printf("exit value of pid(%d) = %d\n", wait_rv, WEXITSTATUS(status));
 		i++;
 	}
 	free_heap(&pipex->heap);
