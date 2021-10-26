@@ -74,13 +74,14 @@ void	wait_and_free(t_pipex *pipex)
 	i = 0;
 	printf("pipe_amount=%d\n", pipex->pipe_amount);
 	printf("process_amount=%d\n", pipex->process_amount);
+	system("lsof -F cft0 -c pipex");
 	while (i < pipex->process_amount)
 	{
 		int wait_rv;
 		wait_rv = wait(NULL);
+		system("lsof -F cft0 -c pipex");
 		printf("wait_rv=%d\n",wait_rv);
 		i++;
 	}
-	system("lsof -F cft0 -c pipex");
 	free_heap(&pipex->heap);
 }

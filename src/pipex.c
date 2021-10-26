@@ -157,17 +157,19 @@ int main(int argc, char **argv, char **envp)
 	ft_bzero(&pipex, sizeof(pipex));
 	if (parse_input(argc, argv, envp, &pipex) != 0)
 		return (1);
-	if (create_pipes(&pipex.fork_info.fd, pipex.pipe_amount) != 0)
-		return (2);
+	// if (create_pipes(&pipex.fork_info.fd, pipex.pipe_amount) != 0)
+	// 	return (2);
 	if (create_forks(&pipex) != 0)
 		return (3);
 	i = 0;
-	while (i < pipex.process_amount && pipex.fork_info.pid[i] != 0)
-		i++;
-	if (i == pipex.process_amount)
-	{
+// 	while (i < pipex.process_amount && pipex.fork_info.pid[i] != 0)
+// 		i++;
+// 	if (i == pipex.process_amount)
+// 	{
+// 		wait_and_free(&pipex);
+// //		 system("lsof -F cft0 -c pipex");
+// 	}
+	if (pipex.fork_info.pid != 0)
 		wait_and_free(&pipex);
-//		 system("lsof -F cft0 -c pipex");
-	}
 	return (0);
 }
