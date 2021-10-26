@@ -47,10 +47,7 @@ int	check_set_command(char *cmd_arg, char **path_split, char **full_cmd)
 	{
 		*full_cmd = correct_path(path_split[i], cmd_arg);
 		if (*full_cmd)
-		{
-			// printf("working path: %s\n", current_path[i]);
 			return (0);
-		}
 		i++;
 	}
 	return (-1);
@@ -58,9 +55,7 @@ int	check_set_command(char *cmd_arg, char **path_split, char **full_cmd)
 
 int	create_cmd_split(char *cmd_arg, char ***cmd_split)
 {
-	// printf("create_cmd_split->cmd_arg= %s\n", cmd_arg);
 	*cmd_split = ft_split(cmd_arg, ' ');
-	// print_split(*path_split);
 	if (*cmd_split)
 		return (0);
 	else
@@ -87,16 +82,19 @@ int	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 	pipex->pipe_amount = argc - 4;
 	if (create_path_split(envp, &pipex->heap.splits.path_split) == -1)
 		return (1);
-	if (parse_files(argv[1], argv[argc - 1], &pipex->heap.infile, &pipex->heap.outfile) != 0)
-	 	return (2);
+	if (parse_files(argv[1], argv[argc - 1], &pipex->heap.infile, \
+		&pipex->heap.outfile) != 0)
+		return (2);
 	printf("infile = %s\noutfile = %s\n", pipex->heap.infile, pipex->heap.outfile);
 	i = 2;
 	while (i < argc - 1)
 	{
-		if (create_cmd_split(argv[i], &pipex->heap.splits.cmd_split[i - 2]) == -1)
+		if (create_cmd_split(argv[i], \
+			&pipex->heap.splits.cmd_split[i - 2]) == -1)
 			return (3);
-		if (check_set_command(pipex->heap.splits.cmd_split[i - 2][0], pipex->heap.splits.path_split, &pipex->heap.command[i - 2]) == -1)
-			return (printf("CHECK_SET_CMD FAIL!!!!!\n"));;
+		if (check_set_command(pipex->heap.splits.cmd_split[i - 2][0], \
+			pipex->heap.splits.path_split, &pipex->heap.command[i - 2]) == -1)
+			return (printf("CHECK_SET_CMD FAIL!!!!!\n"));
 		i++;
 	}
 	return (0);

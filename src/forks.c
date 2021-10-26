@@ -13,20 +13,20 @@ int	fork_end(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 	if (f_info->pid == -1)
 		return (-1);
 	if (f_info->pid == 0)
-		{
-			printf("end_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
-			close(fd0[1]);
-			if (dup2(fd0[0], STDIN_FILENO) == -1)
-				return (1);
-			close(fd0[0]);
-			fd = open(heap->outfile, O_CREAT | O_WRONLY, 0666);
-			if (fd == -1)
-				return (2);
-			if (dup2(fd, STDOUT_FILENO) == -1)
-				return (3);
-			close(fd);
-			execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
-		}
+	{
+		printf("end_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
+		close(fd0[1]);
+		if (dup2(fd0[0], STDIN_FILENO) == -1)
+			return (1);
+		close(fd0[0]);
+		fd = open(heap->outfile, O_CREAT | O_WRONLY, 0666);
+		if (fd == -1)
+			return (2);
+		if (dup2(fd, STDOUT_FILENO) == -1)
+			return (3);
+		close(fd);
+		execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
+	}
 	else
 		close_pipe(fd0);
 	return (0);
@@ -38,18 +38,18 @@ int	fork_mid(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 	if (f_info->pid == -1)
 		return (-1);
 	if (f_info->pid == 0)
-		{
-			printf("mid_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
-			close(fd0[1]);
-			if (dup2(fd0[0], STDIN_FILENO) == -1)
-				return (1);
-			close(fd0[0]);
-			close(fd1[0]);
-			if (dup2(fd1[1], STDOUT_FILENO) == -1)
-				return (printf("dup2failinmid\n"));
-			close(fd1[1]);
-			execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
-		}
+	{
+		printf("mid_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
+		close(fd0[1]);
+		if (dup2(fd0[0], STDIN_FILENO) == -1)
+			return (1);
+		close(fd0[0]);
+		close(fd1[0]);
+		if (dup2(fd1[1], STDOUT_FILENO) == -1)
+			return (printf("dup2failinmid\n"));
+		close(fd1[1]);
+		execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
+	}
 	else
 		close_pipe(fd0);
 	return (0);
@@ -63,20 +63,20 @@ int	fork_start(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 	if (f_info->pid == -1)
 		return (-1);
 	if (f_info->pid == 0)
-		{
-			printf("start_child   %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
-			close(fd1[0]);
-			if (dup2(fd1[1], STDOUT_FILENO) == -1)
-				return (1);
-			close(fd1[1]);
-			fd = open(heap->infile, O_RDONLY);
-			if (fd == -1)
-				return (2);
-			if (dup2(fd, STDIN_FILENO) == -1)
-				return (3);
-			close(fd);
-			execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
-		}
+	{
+		printf("start_child   %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
+		close(fd1[0]);
+		if (dup2(fd1[1], STDOUT_FILENO) == -1)
+			return (1);
+		close(fd1[1]);
+		fd = open(heap->infile, O_RDONLY);
+		if (fd == -1)
+			return (2);
+		if (dup2(fd, STDIN_FILENO) == -1)
+			return (3);
+		close(fd);
+		execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
+	}
 	return (0);
 }
 
@@ -107,9 +107,9 @@ int	setup_pipes_fds(t_fork_info *f_info, int child_amount, int index)
 
 int	create_forks(t_pipex *pipex)
 {
-	int			*i;
-	t_fork_info	*f_info;
-	t_fork_fun	fun_ptr[3] = {
+	int						*i;
+	t_fork_info				*f_info;
+	const static t_fork_fun	fun_ptr[3] = {
 		[START] = fork_start,
 		[MID] = fork_mid,
 		[END] = fork_end

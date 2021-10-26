@@ -67,18 +67,14 @@ void	free_heap(t_heap *heap)
 
 void	wait_and_free(t_pipex *pipex)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	printf("pipe_amount=%d\n", pipex->pipe_amount);
 	printf("child_amount=%d\n", pipex->child_amount);
-	// system("lsof -F cft0 -c pipex");
 	while (i < pipex->child_amount)
 	{
-		int wait_rv;
-		wait_rv = wait(NULL);
-		// system("lsof -F cft0 -c pipex");
-		printf("wait_rv=%d\n",wait_rv);
+		wait(NULL);
 		i++;
 	}
 	free_heap(&pipex->heap);

@@ -21,10 +21,10 @@ void	print_split(char **split)
 	i = 0;
 	printf("\n******\n\n");
 	while (split[i])
-		{
-			printf("split[%d] = %s\n", i, split[i]);
-			i++;
-		}
+	{
+		printf("split[%d] = %s\n", i, split[i]);
+		i++;
+	}
 	printf("\n******\n\n");
 }
 
