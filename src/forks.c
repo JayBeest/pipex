@@ -5,7 +5,7 @@
 
 #include <debug.h>
 
-static int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
+static int	fork_start(int pipe_fd0[2], int *pid, t_heap *heap)
 {
 	int	fd;
 
@@ -14,11 +14,11 @@ static int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
 		return (-1);
 	if (*pid == 0)
 		{
-			printf("start_child %d here->fd1[0] = %2d fd1[1] = %2d\n", getpid(), pipe_fd1[0], pipe_fd1[1]);
-			close(pipe_fd1[0]);
-			if (dup2(pipe_fd1[1], STDOUT_FILENO) == -1)
+			printf("start_child %d here->fd1[0] = %2d fd1[1] = %2d\n", getpid(), pipe_fd0[0], pipe_fd0[1]);
+			close(pipe_fd0[0]);
+			if (dup2(pipe_fd0[1], STDOUT_FILENO) == -1)
 				return (1);
-			close(pipe_fd1[1]);
+			close(pipe_fd0[1]);
 			fd = open(heap->infile, O_RDONLY);
 			if (fd == -1)
 				return (2);
@@ -30,7 +30,7 @@ static int	fork_start(int pipe_fd1[2], int *pid, t_heap *heap)
 	return (0);
 }
 
-static int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
+static int	fork_end(int pipe_fd1[2], int *pid, t_heap *heap)
 {
 	int	fd;
 
@@ -39,11 +39,11 @@ static int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
 		return (-1);
 	if (*pid == 0)
 		{
-			printf("end_child   %d here->fd2[0] = %2d fd2[1] = %2d\n", getpid(), pipe_fd2[0], pipe_fd2[1]);
-			close(pipe_fd2[1]);
-			if (dup2(pipe_fd2[0], STDIN_FILENO) == -1)
+			printf("end_child   %d here->fd2[0] = %2d fd2[1] = %2d\n", getpid(), pipe_fd1[0], pipe_fd1[1]);
+			close(pipe_fd1[1]);
+			if (dup2(pipe_fd1[0], STDIN_FILENO) == -1)
 				return (1);
-			close(pipe_fd2[0]);
+			close(pipe_fd1[0]);
 			fd = open(heap->outfile, O_CREAT | O_WRONLY, 0666);
 			if (fd == -1)
 				return (2);
@@ -53,30 +53,30 @@ static int	fork_end(int pipe_fd2[2], int *pid, t_heap *heap)
 			execv(heap->command[heap->i], heap->splits.cmd_split[heap->i]);
 		}
 	else
-		close_pipe(pipe_fd2);
+		close_pipe(pipe_fd1);
 	return (0);
 }
 
-static int	fork_mid(int pipe_fd1[2], int pipe_fd2[2], int *pid, t_heap *heap)
+static int	fork_mid(int pipe_fd0[2], int pipe_fd1[2], int *pid, t_heap *heap)
 {
 	*pid = fork();
 	if (*pid == -1)
 		return (-1);
 	if (*pid == 0)
 		{
-			printf("mid_child   %d here->fd1[0] = %2d fd1[1] = %2d  fd2[0] = %2d fd2[1] = %2d\n", getpid(), pipe_fd1[0], pipe_fd1[1], pipe_fd2[0], pipe_fd2[1]);
-			close(pipe_fd1[1]);
-			if (dup2(pipe_fd1[0], STDIN_FILENO) == -1)
+			printf("mid_child   %d here->fd1[0] = %2d fd1[1] = %2d  fd2[0] = %2d fd2[1] = %2d\n", getpid(), pipe_fd0[0], pipe_fd0[1], pipe_fd1[0], pipe_fd1[1]);
+			close(pipe_fd0[1]);
+			if (dup2(pipe_fd0[0], STDIN_FILENO) == -1)
 				return (1);
+			close(pipe_fd0[0]);
 			close(pipe_fd1[0]);
-			close(pipe_fd2[0]);
-			if (dup2(pipe_fd2[1], STDOUT_FILENO) == -1)
+			if (dup2(pipe_fd1[1], STDOUT_FILENO) == -1)
 				return (printf("dup2failinmid\n"));
-			close(pipe_fd2[1]);
+			close(pipe_fd1[1]);
 			execv(heap->command[heap->i], heap->splits.cmd_split[heap->i]);
 		}
 	else
-		close_pipe(pipe_fd1);
+		close_pipe(pipe_fd0);
 	return (0);
 }
 
