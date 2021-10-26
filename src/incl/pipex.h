@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/25 23:55:23 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/26 00:05:25 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ typedef struct s_fork_info
 	int	rv;
 	int	pid[MAX_COMMANDS];
 	int	fd[MAX_COMMANDS][2];
+	int fd0[2];
+	int fd1[2];
 }				t_fork_info;
 
 typedef struct s_pipex

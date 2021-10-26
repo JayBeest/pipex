@@ -29,6 +29,35 @@ static int	fork_start(int pipe_fd0[2], int *pid, t_heap *heap)
 		}
 	return (0);
 }
+static int	fork_start_new(t_fork_info *f_info, t_heap *heap)
+{
+	int	pid;
+	int	fd;
+
+	if (pipe(f_info->fd0) == -1)
+		return (4);
+	pid = fork();
+	if (pid == -1)
+		return (-1);
+	if (pid == 0)
+		{
+			printf("start_child %d here->fd1[0] = %2d fd1[1] = %2d\n", getpid(), f_info->fd0[0], f_info->fd0[1]);
+			close(f_info->fd0[0]);
+			if (dup2(f_info->fd0[1], STDOUT_FILENO) == -1)
+				return (1);
+			close(f_info->fd0[1]);
+			fd = open(heap->infile, O_RDONLY);
+			if (fd == -1)
+				return (2);
+			if (dup2(fd, STDIN_FILENO) == -1)
+				return (3);
+			close(fd);
+			execv(heap->command[heap->i], heap->splits.cmd_split[heap->i]);
+		}
+	else
+		close_pipe(f_info->fd0);
+	return (0);
+}
 
 static int	fork_end(int pipe_fd1[2], int *pid, t_heap *heap)
 {
@@ -91,6 +120,8 @@ int	create_forks(t_pipex *pipex)
 	{
 		if (*i == 0)
 			f_info->rv = fork_start(f_info->fd[*i], &f_info->pid[*i], &pipex->heap);
+//		if (*i == 0)
+//			f_info->rv = fork_start_new(f_info, &pipex->heap);
 		else if (*i == pipex->process_amount - 1)
 			f_info->rv = fork_end(f_info->fd[*i - 1], &f_info->pid[*i], &pipex->heap);
 		else
