@@ -72,19 +72,21 @@ t_err	create_cmd_split(char *cmd_arg, char ***cmd_split)
 		return (MALLOC_FAIL);
 }
 
-t_err	parse_files(char *in_arg, char *out_arg, char **infile, char **outfile)
+t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, t_fork_info *f_info)
 {
 	if (access(in_arg, R_OK) != OK)
 		return (print_errno_string(NO_ACCESS, in_arg));
-	*infile = ft_strdup(in_arg);
-	if (!*infile)
+	heap->infile = ft_strdup(in_arg);
+	if (!heap->infile)
 		return (MALLOC_FAIL);
+	f_info->access_infile = TRUE;
 	if (access(out_arg, F_OK) == OK && access(out_arg, W_OK) != OK)
 		return (print_errno_string(NO_ACCESS, out_arg));
 	else
-		*outfile = ft_strdup(out_arg);
-	if (!*outfile)
+		heap->outfile = ft_strdup(out_arg);
+	if (!heap->outfile)
 		return (MALLOC_FAIL);
+	f_info->access_outfile = TRUE;
 	return (NO_ERROR);
 }
 
@@ -98,8 +100,8 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 	splits = &pipex->heap.splits;
 	if (create_path_split(envp, &splits->path_split) == MALLOC_FAIL)
 		return (MALLOC_FAIL);
-	if (parse_files(argv[1], argv[argc - 1], &pipex->heap.infile, \
-		&pipex->heap.outfile) == MALLOC_FAIL)
+	if (parse_files(argv[1], argv[argc - 1], &pipex->heap, \
+		&pipex->fork_info) == MALLOC_FAIL)
 		return (MALLOC_FAIL);
 	i = 2;
 	while (i < argc - 1)

@@ -71,6 +71,8 @@ typedef struct s_heap
 typedef struct s_fork_info
 {
 	t_fork_type	type;
+	t_bool		access_infile;
+	t_bool		access_outfile;
 	int			pid;
 	int			fd0[2];
 	int			fd1[2];
