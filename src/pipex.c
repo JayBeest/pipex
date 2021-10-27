@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/27 03:41:34 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/27 05:14:07 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,32 @@
 
 t_err	print_errno_string(t_err error, char *str)
 {
-	char	*pipex_str;
 	char	*temp_str;
+	char	*err_str;
 
 	if (error > NO_ERROR)
-		pipex_str = ft_strdup("pipex: ");
+		temp_str = ft_strdup("pipex: ");
 	else
-		pipex_str = ft_strdup(str);
-	if (!pipex_str)
-		return (MALLOC_FAIL);
-	temp_str = ft_strjoin(pipex_str, str);
+		temp_str = ft_strdup(str);
 	if (!temp_str)
 		return (MALLOC_FAIL);
-	free(pipex_str);
-	pipex_str = ft_strjoin(temp_str, ": ");
-	if (!pipex_str)
+	err_str = ft_strjoin(temp_str, str);
+	if (!err_str)
+	{
+		free(temp_str);
 		return (MALLOC_FAIL);
-	perror(pipex_str);
-	free(pipex_str);
+	}
+	free(temp_str);
+	perror(err_str);
+	free(err_str);
 	return (error);
+//	temp_str = ft_strjoin(err_str, ": ");
+//	free(err_str);
+//	if (!temp_str)
+//		return (MALLOC_FAIL);
+//	perror(temp_str);
+//	free(temp_str);
+//	return (error);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -60,13 +67,13 @@ int	main(int argc, char **argv, char **envp)
 	if (return_value != 0)
 		print_errno_string(return_value, NULL);
 	if (return_value == MALLOC_FAIL)
-		return (1);
-	return_value = create_forks(&pipex);
-	if (return_value >= MALLOC_FAIL)
 	{
-		perror(NULL);
-		return (3);
+		free_heap(&pipex.heap);
+		return (1);
 	}
+	return_value = create_forks(&pipex);
+	if (return_value > MALLOC_FAIL)
+		return (3);
 	if (pipex.fork_info.pid == 0)
 		return (0);
 	wait_for_children(&pipex);

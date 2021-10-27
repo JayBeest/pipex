@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/26 01:30:24 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/27 03:29:16 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,6 @@ void	wait_for_children(t_pipex *pipex)
 
 	status = 0;
 	i = 0;
-	printf("pipe_amount=%d\n", pipex->pipe_amount);
-	printf("child_amount=%d\n", pipex->child_amount);
 	while (i < pipex->child_amount)
 	{
 		int wait_rv = wait(&status);
