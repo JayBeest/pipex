@@ -8,7 +8,7 @@ SRC = 		pipex.c \
 SRC_DIR =	src
 OBJ_DIR	= 	$(SRC_DIR)/obj
 INCL = 		-I$(SRC_DIR)/incl
-C_FLAGS = 	-g #-fsanitize=address -Wall -Wextra -Werror
+C_FLAGS = 	-g -fsanitize=address -Wall -Wextra -Werror
 OBJ = 		$(SRC:%.c=$(OBJ_DIR)/%.o)
 
 all: $(NAME)

@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/26 00:05:25 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/27 03:29:16 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,27 @@
 # define OK 0
 # define MAX_COMMANDS 1024
 
+typedef enum e_bool
+{
+	FALSE,
+	TRUE
+}				t_bool;
+
+typedef enum e_err
+{
+	NO_ERROR,
+	NO_ACCESS,
+	NO_CMD,
+	MALLOC_FAIL,
+	PIPE_FAIL,
+	FORK_FAIL,
+	DUP2_FAIL,
+	OPEN_FAIL,
+	EXECV_FAIL,
+	ENVP_FAIL,
+	DEFAULT
+}				t_err;
+
 typedef enum e_fork_type
 {
 	START,
@@ -26,11 +47,6 @@ typedef enum e_fork_type
 	END
 }				t_fork_type;
 
-typedef enum e_bool
-{
-	FALSE,
-	TRUE
-}				t_bool;
 
 typedef enum e_errno
 {
@@ -67,8 +83,11 @@ typedef struct s_pipex
 	int			pipe_amount;
 	t_heap		heap;
 	t_fork_info	fork_info;
+	t_bool		debug;
 }				t_pipex;
 
-typedef int(*t_fork_fun)(int[2], int[2], t_fork_info*, t_heap*);
+typedef t_err(*t_fork_fun)(int[2], int[2], t_fork_info*, t_heap*);
+
+t_err	print_errno_string(t_err error, char *str);
 
 #endif

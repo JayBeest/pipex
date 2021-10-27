@@ -13,6 +13,6 @@
 #ifndef FORKS_H
 # define FORKS_H
 
-int	create_forks(t_pipex *pipex);
+t_err	create_forks(t_pipex *pipex);
 
 #endif

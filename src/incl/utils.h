@@ -15,6 +15,6 @@
 
 void	close_pipe(int fd[2]);
 void	free_heap(t_heap *heap);
-void	wait_and_free(t_pipex *pipex);
+void	wait_for_children(t_pipex *pipex);
 
 #endif

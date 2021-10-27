@@ -65,7 +65,7 @@ void	free_heap(t_heap *heap)
 	free_strings(heap);
 }
 
-void	wait_and_free(t_pipex *pipex)
+void	wait_for_children(t_pipex *pipex)
 {
 	int	status;
 	int	i;
@@ -81,5 +81,4 @@ void	wait_and_free(t_pipex *pipex)
 			printf("exit value of pid(%d) = %d\n", wait_rv, WEXITSTATUS(status));
 		i++;
 	}
-	free_heap(&pipex->heap);
 }
