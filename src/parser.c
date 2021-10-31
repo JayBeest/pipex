@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/27 03:44:11 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 13:21:46 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 	}
 	free(full_cmd);
 	free(path);
+	*cmd_ptr = ft_strdup(cmd);
+	if (!*cmd_ptr)
+		return (MALLOC_FAIL);
 	return (NO_CMD);
 }
 
@@ -74,12 +77,13 @@ t_err	create_cmd_split(char *cmd_arg, char ***cmd_split)
 
 t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, t_fork_info *f_info)
 {
-	if (access(in_arg, R_OK) != OK)
-		return (print_errno_string(NO_ACCESS, in_arg));
 	heap->infile = ft_strdup(in_arg);
 	if (!heap->infile)
 		return (MALLOC_FAIL);
-	f_info->access_infile = TRUE;
+	if (access(in_arg, R_OK) != OK)
+		print_errno_string(NO_ACCESS, in_arg);
+	else
+		f_info->access_infile = TRUE;
 	if (access(out_arg, F_OK) == OK && access(out_arg, W_OK) != OK)
 		return (print_errno_string(NO_ACCESS, out_arg));
 	else

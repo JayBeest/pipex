@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/27 05:14:07 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 13:36:49 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,6 @@ t_err	print_errno_string(t_err error, char *str)
 	perror(err_str);
 	free(err_str);
 	return (error);
-//	temp_str = ft_strjoin(err_str, ": ");
-//	free(err_str);
-//	if (!temp_str)
-//		return (MALLOC_FAIL);
-//	perror(temp_str);
-//	free(temp_str);
-//	return (error);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -60,7 +53,7 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	pipex;
 	t_err	return_value;
 
-	printf("MAIN_PID: %d\n", getpid());
+//	printf("MAIN_PID: %d\n", getpid());
 //	print_split(envp);
 	ft_bzero(&pipex, sizeof(pipex));
 	return_value = parse_input(argc, argv, envp, &pipex);

@@ -47,7 +47,6 @@ typedef enum e_fork_type
 	END
 }				t_fork_type;
 
-
 typedef enum e_errno
 {
 	ARG_COUNT,

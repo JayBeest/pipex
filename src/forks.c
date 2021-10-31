@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 22:14:24 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/27 04:40:05 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 13:37:43 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,25 @@ t_err	fork_end(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 {
 	int	fd;
 
+	(void)fd1;
 	f_info->pid = fork();
 	if (f_info->pid == -1)
 		return (FORK_FAIL);
 	if (f_info->pid == 0)
 	{
-		printf("end_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
+//		printf("end_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
 		if (dup2(fd0[0], STDIN_FILENO) == -1)
 			return (DUP2_FAIL);
 		close_pipe(fd0);
-		fd = open(heap->outfile, O_CREAT | O_WRONLY, 0666);
-		if (fd == -1)
-			return (OPEN_FAIL);
-		if (f_info->access_outfile && dup2(fd, STDOUT_FILENO) == -1)
-			return (DUP2_FAIL);
-		close(fd);
-		if (!heap->command[f_info->i])
-			return (NO_CMD);
+		if (f_info->access_outfile)
+		{
+			fd = open(heap->outfile, O_CREAT | O_WRONLY, 0666);
+			if (fd == -1)
+				return (OPEN_FAIL);
+			if (dup2(fd, STDOUT_FILENO) == -1)
+				return (DUP2_FAIL);
+			close(fd);
+		}
 		execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
 		return (EXECV_FAIL);
 	}
@@ -53,15 +55,15 @@ t_err	fork_mid(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 		return (FORK_FAIL);
 	if (f_info->pid == 0)
 	{
-		printf("mid_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
+//		printf("mid_child     %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
 		if (dup2(fd0[0], STDIN_FILENO) == -1)
 			return (DUP2_FAIL);
 		close_pipe(fd0);
 		if (dup2(fd1[1], STDOUT_FILENO) == -1)
 			return (DUP2_FAIL);
 		close_pipe(fd1);
-		if (!heap->command[f_info->i])
-			return (NO_CMD);
+//		if (!heap->command[f_info->i])
+//			return (NO_CMD);
 		execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
 		return (EXECV_FAIL);
 	}
@@ -75,33 +77,34 @@ t_err	fork_start(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 	int	fd;
 
 	f_info->pid = fork();
+	(void)fd0;
 	if (f_info->pid == -1)
 		return (FORK_FAIL);
 	if (f_info->pid == 0)
 	{
-		printf("start_child   %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
+//		printf("start_child   %d here->fd0[0] = %2d fd0[1] = %2d  fd1[0] = %2d fd1[1] = %2d\n", getpid(), fd0[0], fd0[1], fd1[0], fd1[1]);
 		if (dup2(fd1[1], STDOUT_FILENO) == -1)
 			return (DUP2_FAIL);
 		close_pipe(fd1);
 
 		if (f_info->access_infile)
 		{
-		fd = open(heap->infile, O_RDONLY);
-		if (fd == -1)
-			return (OPEN_FAIL);
-		if (dup2(fd, STDIN_FILENO) == -1)
-			return (DUP2_FAIL);
-		close(fd);
+			fd = open(heap->infile, O_RDONLY);
+			if (fd == -1)
+				return (OPEN_FAIL);
+			if (dup2(fd, STDIN_FILENO) == -1)
+				return (DUP2_FAIL);
+			close(fd);
+			execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
+			return (EXECV_FAIL);
 		}
-		if (!heap->command[f_info->i])
-			return (NO_CMD);
-		execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
-		return (EXECV_FAIL);
+//		if (!heap->command[f_info->i])
+//			return (NO_CMD);
 	}
 	return (NO_ERROR);
 }
 
-t_err	setup_pipes_fds(t_fork_info *f_info, int child_amount, int index)
+t_err	setup_pipes_fd(t_fork_info *f_info, int child_amount, int index)
 {
 	if (index == 0)
 	{
@@ -138,11 +141,12 @@ t_err	create_forks(t_pipex *pipex)
 	};
 
 	f_info = &pipex->fork_info;
-	i = &f_info->i;
+	i = &pipex->fork_info.i;
 	while (*i < pipex->child_amount)
 	{
-		setup_pipes_fds(f_info, pipex->child_amount, *i);
+		setup_pipes_fd(f_info, pipex->child_amount, *i);
 		err = fun_ptr[f_info->type](f_info->fd0, f_info->fd1, f_info, &pipex->heap);
+//		printf("current(index:%d) fork return_err = %d\n", *i, err);
 		if (err > MALLOC_FAIL)
 			return (print_errno_string(err, pipex->heap.command[*i]));
 		if (f_info->pid == 0)
