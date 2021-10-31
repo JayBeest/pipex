@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/31 13:21:46 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 13:32:58 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ t_err	create_cmd_split(char *cmd_arg, char ***cmd_split)
 		return (MALLOC_FAIL);
 }
 
-t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, t_fork_info *f_info)
+t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, \
+		t_fork_info *f_info)
 {
 	heap->infile = ft_strdup(in_arg);
 	if (!heap->infile)
