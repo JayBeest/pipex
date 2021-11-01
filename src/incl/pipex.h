@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/27 03:29:16 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 16:48:50 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ typedef struct s_fork_info
 	t_fork_type	type;
 	t_bool		access_infile;
 	t_bool		access_outfile;
+	t_bool		cmd_not_found[MAX_COMMANDS];
+
 	int			pid;
 	int			fd0[2];
 	int			fd1[2];

@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/31 13:32:58 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 16:59:42 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 	return (NO_CMD);
 }
 
-t_err	check_set_cmd(char *cmd_arg, char **path_split, char **full_cmd)
+t_err	check_set_cmd(char *cmd_arg, char **path_split, char **full_cmd, t_bool *cmd_not_found)
 {
 	int		i;
 	t_err	err;
@@ -58,7 +58,10 @@ t_err	check_set_cmd(char *cmd_arg, char **path_split, char **full_cmd)
 	{
 		err = correct_path(path_split[i], cmd_arg, full_cmd);
 		if (err == NO_ERROR)
+		{
+			*cmd_not_found = TRUE;
 			return (NO_ERROR);
+		}
 		else if (err == MALLOC_FAIL)
 			return (MALLOC_FAIL);
 		i++;
@@ -115,7 +118,7 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 			&splits->cmd_split[i - 2]) == MALLOC_FAIL)
 			return (MALLOC_FAIL);
 		if (check_set_cmd(splits->cmd_split[i - 2][0], splits->path_split, \
-			&pipex->heap.command[i - 2]) == MALLOC_FAIL)
+			&pipex->heap.command[i - 2], &pipex->fork_info.cmd_not_found[i - 2]) == MALLOC_FAIL)
 			return (MALLOC_FAIL);
 		i++;
 	}

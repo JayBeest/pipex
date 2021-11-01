@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/27 03:29:16 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 16:15:34 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,12 @@ void	wait_for_children(t_pipex *pipex)
 	i = 0;
 	while (i < pipex->child_amount)
 	{
-		int wait_rv = wait(&status);
-		if (WIFEXITED(status))
-			printf("exit value of pid(%d) = %d\n", wait_rv, WEXITSTATUS(status));
+		wait(&status);
+		if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+		{
+//			printf("WEXITSTATUS=%d\n", WEXITSTATUS(status));
+//			print_errno_string(WEXITSTATUS(status), pipex->heap.command[i]);
+		}
 		i++;
 	}
 }

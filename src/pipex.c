@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/31 13:36:49 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/10/31 16:26:24 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,10 @@ t_err	print_errno_string(t_err error, char *str)
 		return (MALLOC_FAIL);
 	}
 	free(temp_str);
-	perror(err_str);
+	if (error == NO_CMD)
+		printf("%s command not found\n", err_str);
+	else
+		perror(err_str);
 	free(err_str);
 	return (error);
 }
