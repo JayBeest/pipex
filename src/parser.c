@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/31 16:59:42 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/01 13:18:35 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,12 @@ t_err	check_set_cmd(char *cmd_arg, char **path_split, char **full_cmd, t_bool *c
 	{
 		err = correct_path(path_split[i], cmd_arg, full_cmd);
 		if (err == NO_ERROR)
-		{
-			*cmd_not_found = TRUE;
 			return (NO_ERROR);
-		}
 		else if (err == MALLOC_FAIL)
 			return (MALLOC_FAIL);
 		i++;
 	}
+	*cmd_not_found = TRUE;
 	return (print_errno_string(NO_CMD, cmd_arg));
 }
 
