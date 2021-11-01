@@ -83,11 +83,11 @@ t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, \
 	if (!heap->infile)
 		return (MALLOC_FAIL);
 	if (access(in_arg, R_OK) != OK)
-		create_errno_string(NO_ACCESS, in_arg, &heap->errno_str);
+		create_errno_string(NO_ACCESS, in_arg);
 	else
 		f_info->access_infile = TRUE;
 	if (access(out_arg, F_OK) == OK && access(out_arg, W_OK) != OK)
-		return (create_errno_string(NO_ACCESS, out_arg, &heap->errno_str));
+		return (create_errno_string(NO_ACCESS, out_arg));
 	else
 		heap->outfile = ft_strdup(out_arg);
 	if (!heap->outfile)
@@ -102,8 +102,7 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 	int			rv;
 	int	i;
 
-	pipex->child_amount = argc - 3;
-	pipex->pipe_amount = argc - 4;
+
 	splits = &pipex->heap.splits;
 	if (create_path_split(envp, &splits->path_split) == MALLOC_FAIL)
 		return (MALLOC_FAIL);
@@ -120,8 +119,8 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 			&pipex->heap.command[i - 2], &pipex->fork_info.cmd_not_found[i - 2]);
 		if (rv == MALLOC_FAIL)
 			return (MALLOC_FAIL);
-		else if (rv == NO_CMD)
-			create_errno_string(NO_CMD, splits->cmd_split[i - 2][0], &pipex->heap.errno_str);
+		else if (rv == NO_CMD && !((i == 2 && pipex->fork_info.access_infile == FALSE) || (i == argc - 2 && pipex->fork_info.access_outfile == FALSE)))
+			create_errno_string(NO_CMD, splits->cmd_split[i - 2][0]);
 		i++;
 	}
 	return (NO_ERROR);

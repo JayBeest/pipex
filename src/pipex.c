@@ -26,36 +26,56 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-t_err	store_err_to_heap(t_err error, char *err_str, char **err_str_ptr)
+// t_err	store_err_to_heap(t_err error, char *err_str, char **err_str_ptr)
+// {
+// 	char	*temp_ptr;
+// 	char	*errno_str_ptr;
+
+// 	temp_ptr = err_str;
+// 	errno_str_ptr = strerror(errno);
+// 	if (error == NO_CMD)
+// 		err_str = ft_strjoin(err_str, ": command not found\n");
+// 	else
+// 	{
+// 		err_str = ft_strjoin(err_str, ": ");
+// 		ft_delstr(temp_ptr);
+// 		if (!err_str)
+// 			return (MALLOC_FAIL);
+// 		temp_ptr = err_str;
+// 		err_str = ft_strjoin(err_str, errno_str_ptr);
+// 	}
+// 	if (!err_str)
+// 		{
+// 			ft_delstr(temp_ptr);
+// 			return (MALLOC_FAIL);
+// 		}
+// 	ft_delstr(*err_str_ptr);
+// 	*err_str_ptr = err_str;
+// 	// printf("TESTING CUSTOM ERRSTR = %s\n", *err_str_ptr);
+// 	return (NO_ERROR);	
+// }
+
+t_err	print_errno_string(t_err error, char *err_str)
 {
 	char	*temp_ptr;
-	char	*errno_str_ptr;
 
 	temp_ptr = err_str;
-	errno_str_ptr = strerror(errno);
 	if (error == NO_CMD)
-		err_str = ft_strjoin(err_str, ": command not found\n");
-	else
 	{
-		err_str = ft_strjoin(err_str, ": ");
-		ft_delstr(temp_ptr);
+		err_str = ft_strjoin(err_str, ": command not found");
 		if (!err_str)
-			return (MALLOC_FAIL);
-		temp_ptr = err_str;
-		err_str = ft_strjoin(err_str, errno_str_ptr);
-	}
-	if (!err_str)
 		{
 			ft_delstr(temp_ptr);
 			return (MALLOC_FAIL);
 		}
-	ft_delstr(*err_str_ptr);
-	*err_str_ptr = err_str;
-	// printf("TESTING CUSTOM ERRSTR = %s\n", *err_str_ptr);
-	return (NO_ERROR);	
+		ft_putendl_fd(err_str, 2);
+	}
+	else
+		perror(err_str);
+	return (error);
 }
 
-t_err	create_errno_string(t_err error, char *str, char **err_str_ptr)
+t_err	create_errno_string(t_err error, char *str)
 {
 	char	*temp_str;
 	char	*err_str;
@@ -73,12 +93,8 @@ t_err	create_errno_string(t_err error, char *str, char **err_str_ptr)
 		return (MALLOC_FAIL);
 	}
 	free(temp_str);
-	store_err_to_heap(error, err_str, err_str_ptr);
-	// if (error == NO_CMD)
-	// 	printf("%s command not found\n", err_str);
-	// else
-	// 	perror(err_str);
-	// free(err_str);
+	print_errno_string(error, err_str);
+	free(err_str);
 	return (error);
 }
 
@@ -86,25 +102,25 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 	t_err	return_value;
+	int		exit_code;
 
-//	printf("MAIN_PID: %d\n", getpid());
-//	print_split(envp);
 	ft_bzero(&pipex, sizeof(pipex));
+	pipex.child_amount = argc - 3;
+	pipex.pipe_amount = argc - 4;
 	return_value = parse_input(argc, argv, envp, &pipex);
 	if (return_value != 0)
-		create_errno_string(return_value, NULL, &pipex.heap.errno_str);
+		create_errno_string(return_value, NULL);
 	if (return_value == MALLOC_FAIL)
 	{
 		free_heap(&pipex.heap);
-		return (1);
+		return (-1);
 	}
 	return_value = create_forks(&pipex);
 	if (return_value > MALLOC_FAIL)
-		return (3);
+		return (-2);
 	if (pipex.fork_info.pid == 0)
 		return (0);
-	wait_for_children(&pipex);
-	printf("%s", pipex.heap.errno_str);
+	exit_code = wait_for_children(&pipex);
 	free_heap(&pipex.heap);
-	return (0);
+	return (exit_code);
 }

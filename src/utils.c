@@ -65,21 +65,18 @@ void	free_heap(t_heap *heap)
 	free_strings(heap);
 }
 
-void	wait_for_children(t_pipex *pipex)
+int	wait_for_children(t_pipex *pipex)
 {
 	int	status;
 	int	i;
 
-	status = 0;
 	i = 0;
 	while (i < pipex->child_amount)
 	{
 		wait(&status);
-		if (WIFEXITED(status) )
-		{
-//			printf("WEXITSTATUS=%d\n", WEXITSTATUS(status));
-//			print_errno_string(WEXITSTATUS(status), pipex->heap.command[i]);
-		}
+		if (WIFEXITED(status))
+			printf("exit_code=%d\n", WEXITSTATUS(status));
 		i++;
 	}
+	return (WEXITSTATUS(status));
 }
