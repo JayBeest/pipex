@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 22:14:24 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/01 13:15:08 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/02 02:27:16 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_err	fork_end(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 		close_pipe(fd0);
 		if (f_info->access_outfile && fd1)
 		{
-			fd = open(heap->outfile, O_CREAT | O_WRONLY, 0644);
+			fd = open(heap->outfile, O_CREAT | O_WRONLY, 0666);
 			if (fd == -1)
 				return (OPEN_FAIL);
 			if (dup2(fd, STDOUT_FILENO) == -1)
