@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/31 16:48:50 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/02 02:27:16 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ typedef struct s_heap
 	char		*command[MAX_COMMANDS];
 	char		*infile;
 	char		*outfile;
-	// char		*errno_str;
 }				t_heap;
 
 typedef struct s_fork_info
@@ -74,6 +73,7 @@ typedef struct s_fork_info
 	t_bool		access_infile;
 	t_bool		access_outfile;
 	t_bool		cmd_not_found[MAX_COMMANDS];
+
 	int			pid;
 	int			fd0[2];
 	int			fd1[2];
@@ -91,6 +91,6 @@ typedef struct s_pipex
 
 typedef t_err(*t_fork_fun)(int[2], int[2], t_fork_info*, t_heap*);
 
-t_err	create_errno_string(t_err error, char *str);
+t_err	print_errno_string(t_err error, char *str);
 
 #endif
