@@ -47,21 +47,6 @@ typedef enum e_fork_type
 	END
 }				t_fork_type;
 
-// typedef struct s_splits
-// {
-// 	// char	**cmd_split[MAX_COMMANDS];
-// 	char	**path_split;
-// }				t_splits;
-
-// typedef struct s_heap
-// {
-// 	t_splits	splits;
-// 	// char		*command[MAX_COMMANDS];
-// 	char		*infile;
-// 	char		*outfile;
-// 	// char		*errno_str;
-// }				t_heap;
-
 typedef struct s_cmd_info
 {
 	t_bool	redirect_in;
@@ -90,8 +75,6 @@ typedef struct s_pipex
 	t_cmd_info		cmd_info[MAX_COMMANDS];
 	int				child_amount;
 	int				pipe_amount;
-	// t_heap		heap;
-	// t_bool		debug;
 }				t_pipex;
 
 typedef t_err(*t_fork_fun)(int[2], int[2], t_cmd_info*, t_fork_info*);

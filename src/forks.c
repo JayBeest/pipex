@@ -31,7 +31,7 @@ t_err	fork_end(int fd0[2], int fd1[2], t_cmd_info *cmd_info, t_fork_info *f_info
 		close_pipe(fd0);
 		if (f_info->access_outfile && fd1)
 		{
-			fd = open(f_info->outfile, O_CREAT | O_WRONLY, 0644);
+			fd = open(f_info->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			if (fd == -1)
 				return (OPEN_FAIL);
 			if (dup2(fd, STDOUT_FILENO) == -1)
