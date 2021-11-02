@@ -47,49 +47,54 @@ typedef enum e_fork_type
 	END
 }				t_fork_type;
 
-typedef enum e_errno
-{
-	ARG_COUNT,
-	FORK
-}				t_errno;
+// typedef struct s_splits
+// {
+// 	// char	**cmd_split[MAX_COMMANDS];
+// 	char	**path_split;
+// }				t_splits;
 
-typedef struct s_splits
-{
-	char	**cmd_split[MAX_COMMANDS];
-	char	**path_split;
-}				t_splits;
+// typedef struct s_heap
+// {
+// 	t_splits	splits;
+// 	// char		*command[MAX_COMMANDS];
+// 	char		*infile;
+// 	char		*outfile;
+// 	// char		*errno_str;
+// }				t_heap;
 
-typedef struct s_heap
+typedef struct s_cmd_info
 {
-	t_splits	splits;
-	char		*command[MAX_COMMANDS];
-	char		*infile;
-	char		*outfile;
-	// char		*errno_str;
-}				t_heap;
+	t_bool	redirect_in;
+	t_bool	redirect_out;
+	t_bool	cmd_not_found;
+	char	*full_cmd;
+	char	**cmd_split;
+}				t_cmd_info;
 
 typedef struct s_fork_info
 {
 	t_fork_type	type;
 	t_bool		access_infile;
 	t_bool		access_outfile;
-	t_bool		cmd_not_found[MAX_COMMANDS];
-	int			pid;
+	char		**path_split;
+	char		*infile;
+	char		*outfile;
 	int			fd0[2];
 	int			fd1[2];
-	int			i;
+	int			pid;
 }				t_fork_info;
 
 typedef struct s_pipex
 {
-	int			child_amount;
-	int			pipe_amount;
-	t_heap		heap;
-	t_fork_info	fork_info;
-	t_bool		debug;
+	t_fork_info		fork_info;
+	t_cmd_info		cmd_info[MAX_COMMANDS];
+	int				child_amount;
+	int				pipe_amount;
+	// t_heap		heap;
+	// t_bool		debug;
 }				t_pipex;
 
-typedef t_err(*t_fork_fun)(int[2], int[2], t_fork_info*, t_heap*);
+typedef t_err(*t_fork_fun)(int[2], int[2], t_cmd_info*, t_fork_info*);
 
 t_err	create_errno_string(t_err error, char *str);
 

@@ -31,38 +31,20 @@ void	ft_delstr(char *str)
 	str = NULL;
 }
 
-void	free_strings(t_heap *heap)
+void	free_heap(t_pipex *pipex)
 {
 	int	i;
 
 	i = 0;
-	while (heap->command[i])
+	while (i < pipex->child_amount)
 	{
-		free(heap->command[i]);
-		heap->command[i] = NULL;
+		ft_delstr(pipex->cmd_info[i].full_cmd);
+		ft_free_split(pipex->cmd_info[i].cmd_split);
 		i++;
 	}
-	ft_delstr(heap->infile);
-	ft_delstr(heap->outfile);
-}
-
-void	free_heap(t_heap *heap)
-{
-	int	i;
-
-	i = 0;
-	while (heap->splits.cmd_split[i])
-	{
-		ft_free_split(heap->splits.cmd_split[i]);
-		heap->splits.cmd_split[i] = NULL;
-		i++;
-	}
-	if (heap->splits.path_split)
-	{
-		ft_free_split(heap->splits.path_split);
-		heap->splits.path_split = NULL;
-	}
-	free_strings(heap);
+	ft_free_split(pipex->fork_info.path_split);
+	ft_delstr(pipex->fork_info.infile);
+	ft_delstr(pipex->fork_info.outfile);
 }
 
 int	wait_for_children(t_pipex *pipex)

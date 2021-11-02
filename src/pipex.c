@@ -112,7 +112,7 @@ int	main(int argc, char **argv, char **envp)
 		create_errno_string(return_value, NULL);
 	if (return_value == MALLOC_FAIL)
 	{
-		free_heap(&pipex.heap);
+		free_heap(&pipex);
 		return (-1);
 	}
 	return_value = create_forks(&pipex);
@@ -121,6 +121,6 @@ int	main(int argc, char **argv, char **envp)
 	if (pipex.fork_info.pid == 0)
 		return (0);
 	exit_code = wait_for_children(&pipex);
-	free_heap(&pipex.heap);
+	free_heap(&pipex);
 	return (exit_code);
 }

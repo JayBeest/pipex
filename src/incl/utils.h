@@ -15,7 +15,7 @@
 
 void	ft_delstr(char *str);
 void	close_pipe(int fd[2]);
-void	free_heap(t_heap *heap);
+void	free_heap(t_pipex *pipex);
 int		wait_for_children(t_pipex *pipex);
 
 #endif

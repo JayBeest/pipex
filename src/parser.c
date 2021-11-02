@@ -48,7 +48,7 @@ t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 	return (NO_CMD);
 }
 
-t_err	check_set_cmd(char *cmd_arg, char **path_split, char **full_cmd, t_bool *cmd_not_found)
+t_err	check_set_cmd(char **path_split, t_cmd_info *cmd_info)
 {
 	int		i;
 	t_err	err;
@@ -56,14 +56,14 @@ t_err	check_set_cmd(char *cmd_arg, char **path_split, char **full_cmd, t_bool *c
 	i = 0;
 	while (path_split[i])
 	{
-		err = correct_path(path_split[i], cmd_arg, full_cmd);
+		err = correct_path(path_split[i], cmd_info->cmd_split[0], &cmd_info->full_cmd);
 		if (err == NO_ERROR)
 			return (NO_ERROR);
 		else if (err == MALLOC_FAIL)
 			return (MALLOC_FAIL);
 		i++;
 	}
-	*cmd_not_found = TRUE;
+	cmd_info->cmd_not_found = TRUE;
 	return (NO_CMD);
 }
 
@@ -76,11 +76,10 @@ t_err	create_cmd_split(char *cmd_arg, char ***cmd_split)
 		return (MALLOC_FAIL);
 }
 
-t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, \
-		t_fork_info *f_info)
+t_err	parse_files(char *in_arg, char *out_arg, t_fork_info *f_info)
 {
-	heap->infile = ft_strdup(in_arg);
-	if (!heap->infile)
+	f_info->infile = ft_strdup(in_arg);
+	if (!f_info->infile)
 		return (MALLOC_FAIL);
 	if (access(in_arg, R_OK) != OK)
 		create_errno_string(NO_ACCESS, in_arg);
@@ -89,8 +88,8 @@ t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, \
 	if (access(out_arg, F_OK) == OK && access(out_arg, W_OK) != OK)
 		return (create_errno_string(NO_ACCESS, out_arg));
 	else
-		heap->outfile = ft_strdup(out_arg);
-	if (!heap->outfile)
+		f_info->outfile = ft_strdup(out_arg);
+	if (!f_info->outfile)
 		return (MALLOC_FAIL);
 	f_info->access_outfile = TRUE;
 	return (NO_ERROR);
@@ -98,29 +97,25 @@ t_err	parse_files(char *in_arg, char *out_arg, t_heap *heap, \
 
 t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 {
-	t_splits	*splits;
+	t_fork_info	*f_info;
 	int			rv;
-	int	i;
+	int			i;
 
-
-	splits = &pipex->heap.splits;
-	if (create_path_split(envp, &splits->path_split) == MALLOC_FAIL)
+	f_info = &pipex->fork_info;
+	if (create_path_split(envp, &f_info->path_split) == MALLOC_FAIL)
 		return (MALLOC_FAIL);
-	if (parse_files(argv[1], argv[argc - 1], &pipex->heap, \
-		&pipex->fork_info) == MALLOC_FAIL)
+	if (parse_files(argv[1], argv[argc - 1], &pipex->fork_info) == MALLOC_FAIL)
 		return (MALLOC_FAIL);
-	i = 2;
-	while (i < argc - 1)
+	i = 0;
+	while (i < argc - 3)
 	{
-		if (create_cmd_split(argv[i], \
-			&splits->cmd_split[i - 2]) == MALLOC_FAIL)
+		if (create_cmd_split(argv[i + 2], &pipex->cmd_info[i].cmd_split) == MALLOC_FAIL)
 			return (MALLOC_FAIL);
-		rv = check_set_cmd(splits->cmd_split[i - 2][0], splits->path_split, \
-			&pipex->heap.command[i - 2], &pipex->fork_info.cmd_not_found[i - 2]);
+		rv = check_set_cmd(pipex->fork_info.path_split, &pipex->cmd_info[i]);
 		if (rv == MALLOC_FAIL)
 			return (MALLOC_FAIL);
-		else if (rv == NO_CMD && !((i == 2 && pipex->fork_info.access_infile == FALSE) || (i == argc - 2 && pipex->fork_info.access_outfile == FALSE)))
-			create_errno_string(NO_CMD, splits->cmd_split[i - 2][0]);
+		else if (rv == NO_CMD && !((i == 2 && f_info->access_infile == FALSE) || (i == argc - 2 && f_info->access_outfile == FALSE)))
+			create_errno_string(NO_CMD, pipex->cmd_info[i].cmd_split[0]);
 		i++;
 	}
 	return (NO_ERROR);
