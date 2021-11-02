@@ -102,7 +102,6 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 	int			rv;
 	int	i;
 
-
 	splits = &pipex->heap.splits;
 	if (create_path_split(envp, &splits->path_split) == MALLOC_FAIL)
 		return (MALLOC_FAIL);

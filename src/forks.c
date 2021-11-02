@@ -39,7 +39,12 @@ t_err	fork_end(int fd0[2], int fd1[2], t_fork_info *f_info, t_heap *heap)
 			close(fd);
 		}
 		if (f_info->cmd_not_found[f_info->i])
+		{
+			printf("CMD NOT FOUND!!!!!\n");
+			f_info->return_code = CMD_NOT_FOUND;
+			printf("RETURNCODE HIERO (pointer=%p)=%d\n", &f_info->return_code, f_info->return_code);
 			return (NO_CMD);
+		}
 		execv(heap->command[f_info->i], heap->splits.cmd_split[f_info->i]);
 		return (EXECV_FAIL);
 	}
@@ -144,6 +149,7 @@ t_err	create_forks(t_pipex *pipex)
 		setup_pipes_fd(f_info, pipex->child_amount, *i);
 		err = fun_ptr[f_info->type](f_info->fd0, f_info->fd1, \
 				f_info, &pipex->heap);
+		printf("FOR TEST (i:%d) return_code=%d from PID=%d with pointer:%p\n", *i, pipex->fork_info.return_code, getpid(), &pipex->fork_info.return_code);
 		if (err > NO_ERROR)
 			return (err);
 		if (f_info->pid == 0)

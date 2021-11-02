@@ -65,18 +65,23 @@ void	free_heap(t_heap *heap)
 	free_strings(heap);
 }
 
-int	wait_for_children(t_pipex *pipex)
+void	wait_for_children(t_pipex *pipex)
 {
 	int	status;
 	int	i;
 
+
+	printf("current return_code (pointer=%p)=%d\n", &pipex->fork_info.return_code, pipex->fork_info.return_code);
 	i = 0;
 	while (i < pipex->child_amount)
 	{
 		wait(&status);
-		if (WIFEXITED(status))
-			printf("exit_code=%d\n", WEXITSTATUS(status));
+		// if (WIFEXITED(status))
+		// 	printf("exit_code=%d\n", WEXITSTATUS(status));
 		i++;
 	}
-	return (WEXITSTATUS(status));
+	if (pipex->fork_info.return_code != CMD_NOT_FOUND)
+		pipex->fork_info.return_code = WEXITSTATUS(status);
+	printf("current return_code (pointer=%p)=%d\n", &pipex->fork_info.return_code, pipex->fork_info.return_code);
+
 }

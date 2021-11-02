@@ -102,7 +102,8 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 	t_err	return_value;
-	int		exit_code;
+
+	
 
 	ft_bzero(&pipex, sizeof(pipex));
 	pipex.child_amount = argc - 3;
@@ -120,7 +121,7 @@ int	main(int argc, char **argv, char **envp)
 		return (-2);
 	if (pipex.fork_info.pid == 0)
 		return (0);
-	exit_code = wait_for_children(&pipex);
+	wait_for_children(&pipex);
 	free_heap(&pipex.heap);
-	return (exit_code);
+	return (pipex.fork_info.return_code);
 }

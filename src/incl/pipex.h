@@ -17,6 +17,7 @@
 # define PIPEX_H
 
 # define OK 0
+# define CMD_NOT_FOUND 127
 # define MAX_COMMANDS 1024
 
 typedef enum e_bool
@@ -78,6 +79,7 @@ typedef struct s_fork_info
 	int			fd0[2];
 	int			fd1[2];
 	int			i;
+	int			*return_code;
 }				t_fork_info;
 
 typedef struct s_pipex
