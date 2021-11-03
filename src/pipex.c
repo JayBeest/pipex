@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 23:18:59 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 23:23:29 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,13 @@
 
 t_err	print_errno_string(t_err error, char *err_str)
 {
-	char	*temp_ptr;
-
-	temp_ptr = err_str;
 	if (error == NO_CMD)
 	{
 		err_str = ft_strjoin(err_str, ": command not found");
 		if (!err_str)
-		{
-			ft_delstr(temp_ptr);
 			return (MALLOC_FAIL);
-		}
 		ft_putendl_fd(err_str, 2);
+		free(err_str);
 	}
 	else
 		perror(err_str);
@@ -58,12 +53,9 @@ t_err	create_errno_string(t_err error, char *str)
 	if (!temp_str)
 		return (MALLOC_FAIL);
 	err_str = ft_strjoin(temp_str, str);
-	if (!err_str)
-	{
-		free(temp_str);
-		return (MALLOC_FAIL);
-	}
 	free(temp_str);
+	if (!err_str)
+		return (MALLOC_FAIL);
 	if (error > NO_CMD)
 		print_err = print_custom_error(error, err_str);
 	else
