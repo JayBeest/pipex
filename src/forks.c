@@ -38,15 +38,14 @@ t_err	open_to_stdout(t_fork_info f_info)
 
 int	make_here_doc(char *delimiter)
 {
-//	int	fd;
-	char	current_char[1];
-	t_bool	reading;
+	// int		fd;
+	// char	*new_line;
 
-	reading = TRUE;
-	while (reading)
-	{
-		reading = read(1, current_char, 1);
-	}
+	// reading = TRUE;
+	// while (reading)
+	// {
+	// 	reading = read(1, current_char, 1);
+	// }
 	printf("|->%s<-|\n", delimiter);
 	return (1);
 }

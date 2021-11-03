@@ -17,6 +17,7 @@
 # define PIPEX_H
 
 # define OK 0
+# define CMD_NOT_FOUND 127
 # define MAX_COMMANDS 1024
 
 typedef enum e_bool

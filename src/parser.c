@@ -31,7 +31,7 @@ t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 	full_cmd = ft_strjoin(path, cmd);
 	if (!full_cmd)
 	{
-		free (path);
+		free(path);
 		return (MALLOC_FAIL);
 	}
 	if (access(full_cmd, X_OK) == OK)
