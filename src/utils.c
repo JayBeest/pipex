@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/01 13:13:20 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 00:26:17 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ int	wait_for_children(t_pipex *pipex)
 	while (i < pipex->child_amount)
 	{
 		wait(&status);
-		if (WIFEXITED(status))
-			printf("exit_code=%d\n", WEXITSTATUS(status));
 		i++;
 	}
+	if (pipex->cmd_info[i - 1].cmd_not_found)
+		return (127);
 	return (WEXITSTATUS(status));
 }

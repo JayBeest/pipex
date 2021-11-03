@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 22:14:24 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/01 13:15:08 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 01:03:40 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ t_err	fork_end(int fd0[2], int fd1[2], t_cmd_info *cmd_info, t_fork_info *f_info
 	return (NO_ERROR);
 }
 
-t_err	fork_mid(int fd0[2], int fd1[2], t_cmd_info *cmd_info, t_fork_info *f_info)
+t_err	fork_mid(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
+		t_fork_info *f_info)
 {
 	f_info->pid = fork();
 	if (f_info->pid == -1)
@@ -71,15 +72,15 @@ t_err	fork_mid(int fd0[2], int fd1[2], t_cmd_info *cmd_info, t_fork_info *f_info
 	return (0);
 }
 
-t_err	fork_start(int fd0[2], int fd1[2], t_cmd_info *cmd_info, t_fork_info *f_info)
+t_err	fork_start(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
+		t_fork_info *f_info)
 {
 	int	fd;
 
 	f_info->pid = fork();
-	(void)fd0;
 	if (f_info->pid == -1)
 		return (FORK_FAIL);
-	if (f_info->pid == 0)
+	if (f_info->pid == 0 && fd0)
 	{
 		if (dup2(fd1[1], STDOUT_FILENO) == -1)
 			return (DUP2_FAIL);

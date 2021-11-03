@@ -26,35 +26,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// t_err	store_err_to_heap(t_err error, char *err_str, char **err_str_ptr)
-// {
-// 	char	*temp_ptr;
-// 	char	*errno_str_ptr;
-
-// 	temp_ptr = err_str;
-// 	errno_str_ptr = strerror(errno);
-// 	if (error == NO_CMD)
-// 		err_str = ft_strjoin(err_str, ": command not found\n");
-// 	else
-// 	{
-// 		err_str = ft_strjoin(err_str, ": ");
-// 		ft_delstr(temp_ptr);
-// 		if (!err_str)
-// 			return (MALLOC_FAIL);
-// 		temp_ptr = err_str;
-// 		err_str = ft_strjoin(err_str, errno_str_ptr);
-// 	}
-// 	if (!err_str)
-// 		{
-// 			ft_delstr(temp_ptr);
-// 			return (MALLOC_FAIL);
-// 		}
-// 	ft_delstr(*err_str_ptr);
-// 	*err_str_ptr = err_str;
-// 	// printf("TESTING CUSTOM ERRSTR = %s\n", *err_str_ptr);
-// 	return (NO_ERROR);	
-// }
-
 t_err	print_errno_string(t_err error, char *err_str)
 {
 	char	*temp_ptr;

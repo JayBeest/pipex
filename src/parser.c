@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/01 13:18:35 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 00:56:16 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ t_err	check_set_cmd(char **path_split, t_cmd_info *cmd_info)
 	i = 0;
 	while (path_split[i])
 	{
-		err = correct_path(path_split[i], cmd_info->cmd_split[0], &cmd_info->full_cmd);
+		err = correct_path(path_split[i], cmd_info->cmd_split[0], \
+				&cmd_info->full_cmd);
 		if (err == NO_ERROR)
 			return (NO_ERROR);
 		else if (err == MALLOC_FAIL)
@@ -107,14 +108,16 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 	if (parse_files(argv[1], argv[argc - 1], &pipex->fork_info) == MALLOC_FAIL)
 		return (MALLOC_FAIL);
 	i = 0;
-	while (i < argc - 3)
+	while (i < pipex->child_amount)
 	{
-		if (create_cmd_split(argv[i + 2], &pipex->cmd_info[i].cmd_split) == MALLOC_FAIL)
+		if (create_cmd_split(argv[i + 2], &pipex->cmd_info[i].cmd_split) \
+				== MALLOC_FAIL)
 			return (MALLOC_FAIL);
 		rv = check_set_cmd(pipex->fork_info.path_split, &pipex->cmd_info[i]);
 		if (rv == MALLOC_FAIL)
 			return (MALLOC_FAIL);
-		else if (rv == NO_CMD && !((i == 2 && f_info->access_infile == FALSE) || (i == argc - 2 && f_info->access_outfile == FALSE)))
+		else if (rv == NO_CMD && !((i == 2 && f_info->access_infile == FALSE) \
+				|| (i == argc - 2 && f_info->access_outfile == FALSE)))
 			create_errno_string(NO_CMD, pipex->cmd_info[i].cmd_split[0]);
 		i++;
 	}
