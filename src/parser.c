@@ -6,19 +6,15 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 02:24:42 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 23:14:05 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <libft.h>
 #include <pipex.h>
 #include <path.h>
-
-#include <debug.h>
-
-#define OK 0
 
 t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 {
@@ -98,30 +94,42 @@ t_err	parse_files(char *in_arg, char *out_arg, t_fork_info *f_info)
 	return (NO_ERROR);
 }
 
-t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
+t_err	parse_commands(int argc, char **argv, t_pipex *pipex)
 {
-	t_fork_info	*f_info;
-	int			rv;
+	t_fork_info	f_info;
 	int			i;
+	int			rv;
 
-	f_info = &pipex->fork_info;
-	if (create_path_split(envp, &f_info->path_split) == MALLOC_FAIL)
-		return (MALLOC_FAIL);
-	if (parse_files(argv[1], argv[argc - 1], &pipex->fork_info) == MALLOC_FAIL)
-		return (MALLOC_FAIL);
 	i = 0;
+	f_info = pipex->fork_info;
 	while (i < pipex->child_amount)
 	{
-		if (create_cmd_split(argv[i + 2], &pipex->cmd_info[i].cmd_split) \
+		if (create_cmd_split(argv[i], &pipex->cmd_info[i].cmd_split) \
 				== MALLOC_FAIL)
 			return (MALLOC_FAIL);
 		rv = check_set_cmd(pipex->fork_info.path_split, &pipex->cmd_info[i]);
 		if (rv == MALLOC_FAIL)
 			return (MALLOC_FAIL);
-		else if (rv == NO_CMD && !((i == 2 && f_info->access_infile == FALSE) \
-				|| (i == argc - 2 && f_info->access_outfile == FALSE)))
+		else if (rv == NO_CMD && !((i == 2 && f_info.access_infile == FALSE) \
+				|| (i == argc - 2 && f_info.access_outfile == FALSE)))
 			create_errno_string(NO_CMD, pipex->cmd_info[i].cmd_split[0]);
 		i++;
 	}
 	return (NO_ERROR);
+}
+
+t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
+{
+	t_fork_info	*f_info;
+
+	if (argc < 4)
+		return (NO_ARGS);
+	f_info = &pipex->fork_info;
+	pipex->child_amount = argc - 3;
+	pipex->pipe_amount = argc - 4;
+	if (create_path_split(envp, &f_info->path_split) == MALLOC_FAIL)
+		return (MALLOC_FAIL);
+	if (parse_files(argv[1], argv[argc - 1], &pipex->fork_info) == MALLOC_FAIL)
+		return (MALLOC_FAIL);
+	return (parse_commands(argc, argv + 2, pipex));
 }

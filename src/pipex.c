@@ -6,25 +6,18 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 00:56:16 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 23:18:59 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/wait.h>
+#include <stdlib.h>
 #include <libft.h>
 #include <pipex.h>
 #include <parser.h>
-#include <path.h>
 #include <forks.h>
 #include <utils.h>
-#include <string.h>
 
-#include <debug.h>
-#include <sys/errno.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 t_err	print_errno_string(t_err error, char *err_str)
 {
@@ -46,10 +39,17 @@ t_err	print_errno_string(t_err error, char *err_str)
 	return (error);
 }
 
+t_err	print_custom_error(t_err error, char *err_str)
+{
+	(void)err_str;
+	return (error);
+}
+
 t_err	create_errno_string(t_err error, char *str)
 {
 	char	*temp_str;
 	char	*err_str;
+	t_err	print_err;
 
 	if (error > NO_ERROR)
 		temp_str = ft_strdup("pipex: ");
@@ -64,8 +64,13 @@ t_err	create_errno_string(t_err error, char *str)
 		return (MALLOC_FAIL);
 	}
 	free(temp_str);
-	print_errno_string(error, err_str);
+	if (error > NO_CMD)
+		print_err = print_custom_error(error, err_str);
+	else
+		print_err = print_errno_string(error, err_str);
 	free(err_str);
+	if (print_err == MALLOC_FAIL)
+		return (MALLOC_FAIL);
 	return (error);
 }
 
@@ -75,13 +80,9 @@ int	main(int argc, char **argv, char **envp)
 	t_err	return_value;
 	int		exit_code;
 
-	pipex.fork_info.delimiter = ft_strdup("DELIMITER");
+//	pipex.fork_info.delimiter = ft_strdup("DELIMITER");
 	ft_bzero(&pipex, sizeof(pipex));
-	pipex.child_amount = argc - 3;
-	pipex.pipe_amount = argc - 4;
 	return_value = parse_input(argc, argv, envp, &pipex);
-	if (return_value != 0)
-		create_errno_string(return_value, NULL);
 	if (return_value == MALLOC_FAIL)
 	{
 		free_heap(&pipex);

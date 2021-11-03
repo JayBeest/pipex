@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 22:14:24 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 18:23:45 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 22:35:25 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <pipex.h>
 #include <utils.h>
 
-#include <debug.h>
+#include <stdio.h>
 
 t_err	open_to_stdout(t_fork_info f_info)
 {
@@ -38,14 +38,6 @@ t_err	open_to_stdout(t_fork_info f_info)
 
 int	make_here_doc(char *delimiter)
 {
-	// int		fd;
-	// char	*new_line;
-
-	// reading = TRUE;
-	// while (reading)
-	// {
-	// 	reading = read(1, current_char, 1);
-	// }
 	printf("|->%s<-|\n", delimiter);
 	return (1);
 }

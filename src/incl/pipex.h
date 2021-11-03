@@ -6,12 +6,9 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/31 16:48:50 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 22:57:15 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <debug.h>
-#include <stdio.h>
 
 #ifndef PIPEX_H
 # define PIPEX_H
@@ -31,6 +28,7 @@ typedef enum e_err
 	NO_ERROR,
 	NO_ACCESS,
 	NO_CMD,
+	NO_ARGS,
 	MALLOC_FAIL,
 	PIPE_FAIL,
 	FORK_FAIL,
