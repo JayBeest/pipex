@@ -79,7 +79,7 @@ typedef struct s_pipex
 	int				pipe_amount;
 }				t_pipex;
 
-typedef t_err(*t_fork_fun)(int[2], int[2], t_cmd_info*, t_fork_info*);
+typedef t_err(*t_fork_fun)(t_cmd_info*, t_fork_info*);
 
 t_err	create_errno_string(t_err error, char *str);
 

@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 22:14:24 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 02:48:55 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 18:23:45 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,7 @@ t_err	open_to_stdin(t_fork_info f_info)
 	return (NO_ERROR);
 }
 
-t_err	fork_end(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
-		t_fork_info *f_info)
+t_err	fork_end(t_cmd_info *cmd_info, t_fork_info *f_info)
 {
 	t_err	return_value;
 
@@ -79,62 +78,60 @@ t_err	fork_end(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
 		return (FORK_FAIL);
 	if (f_info->pid == 0)
 	{
-		if (dup2(fd0[0], STDIN_FILENO) == -1)
+		if (dup2(f_info->fd0[0], STDIN_FILENO) == -1)
 			return (DUP2_FAIL);
-		close_pipe(fd0);
+		close_pipe(f_info->fd0);
 		if (f_info->access_outfile)
 		{
 			return_value = open_to_stdout(*f_info);
 			if (return_value != 0)
 				return (return_value);
-			if (cmd_info->cmd_not_found && fd1)
+			if (cmd_info->cmd_not_found)
 				return (NO_CMD);
 			execv(cmd_info->full_cmd, cmd_info->cmd_split);
 			return (EXECV_FAIL);
 		}
 	}
 	else
-		close_pipe(fd0);
+		close_pipe(f_info->fd0);
 	return (NO_ERROR);
 }
 
-t_err	fork_mid(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
-		t_fork_info *f_info)
+t_err	fork_mid(t_cmd_info *cmd_info, t_fork_info *f_info)
 {
 	f_info->pid = fork();
 	if (f_info->pid == -1)
 		return (FORK_FAIL);
 	if (f_info->pid == 0)
 	{
-		if (dup2(fd0[0], STDIN_FILENO) == -1)
+		if (dup2(f_info->fd0[0], STDIN_FILENO) == -1)
 			return (DUP2_FAIL);
-		close_pipe(fd0);
-		if (dup2(fd1[1], STDOUT_FILENO) == -1)
+		close_pipe(f_info->fd0);
+		if (dup2(f_info->fd1[1], STDOUT_FILENO) == -1)
 			return (DUP2_FAIL);
-		close_pipe(fd1);
+		close_pipe(f_info->fd1);
 		if (cmd_info->cmd_not_found)
 			return (NO_CMD);
 		execv(cmd_info->full_cmd, cmd_info->cmd_split);
 		return (EXECV_FAIL);
 	}
 	else
-		close_pipe(fd0);
+		close_pipe(f_info->fd0);
 	return (0);
 }
 
-t_err	fork_start(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
-		t_fork_info *f_info)
+t_err	fork_start(t_cmd_info *cmd_info, t_fork_info *f_info)
 {
 	int	return_value;
 
 	f_info->pid = fork();
 	if (f_info->pid == -1)
 		return (FORK_FAIL);
-	if (f_info->pid == 0 && fd0)
+	if (f_info->pid == 0)
 	{
-		if (dup2(fd1[1], STDOUT_FILENO) == -1)
+		if (dup2(f_info->fd1[1], STDOUT_FILENO) == -1)
 			return (DUP2_FAIL);
-		close_pipe(fd1);
+		close_pipe(f_info->fd1);
 		if (f_info->access_infile)
 		{
 			return_value = open_to_stdin(*f_info);
@@ -190,8 +187,7 @@ t_err	create_forks(t_pipex *pipex)
 	while (i < pipex->child_amount)
 	{
 		setup_pipes_fd(f_info, pipex->child_amount, i);
-		err = fun_ptr[f_info->type](f_info->fd0, f_info->fd1, \
-				&pipex->cmd_info[i], f_info);
+		err = fun_ptr[f_info->type](&pipex->cmd_info[i], f_info);
 		if (err > NO_ERROR)
 			return (err);
 		if (f_info->pid == 0)
