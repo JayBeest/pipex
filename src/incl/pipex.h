@@ -59,11 +59,13 @@ typedef struct s_cmd_info
 typedef struct s_fork_info
 {
 	t_fork_type	type;
+	t_bool		here_doc;
 	t_bool		access_infile;
 	t_bool		access_outfile;
 	char		**path_split;
 	char		*infile;
 	char		*outfile;
+	char 		*delimiter;
 	int			fd0[2];
 	int			fd1[2];
 	int			pid;

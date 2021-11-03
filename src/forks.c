@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 22:14:24 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 02:06:09 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 02:48:55 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@
 
 #include <debug.h>
 
-t_err	open_to_stdout(char *outfile)
+t_err	open_to_stdout(t_fork_info f_info)
 {
 	int	fd;
 
-	fd = open(outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (f_info.here_doc)
+		fd = open(f_info.outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	else
+		fd = open(f_info.outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd == -1)
 		return (OPEN_FAIL);
 	if (dup2(fd, STDOUT_FILENO) == -1)
@@ -33,11 +36,28 @@ t_err	open_to_stdout(char *outfile)
 	return (NO_ERROR);
 }
 
-t_err	open_to_stdin(char *infile)
+int	make_here_doc(char *delimiter)
+{
+//	int	fd;
+	char	current_char[1];
+	t_bool	reading;
+
+	reading = TRUE;
+	while (reading)
+	{
+		reading = read(1, current_char, 1);
+	}
+	printf("|->%s<-|\n", delimiter);
+	return (1);
+}
+
+t_err	open_to_stdin(t_fork_info f_info)
 {
 	int	fd;
 
-	fd = open(infile, O_RDONLY);
+	if (f_info.here_doc)
+		fd = make_here_doc(f_info.delimiter);
+	fd = open(f_info.infile, O_RDONLY);
 	if (fd == -1)
 		return (OPEN_FAIL);
 	if (dup2(fd, STDIN_FILENO) == -1)
@@ -64,7 +84,7 @@ t_err	fork_end(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
 		close_pipe(fd0);
 		if (f_info->access_outfile)
 		{
-			return_value = open_to_stdout(f_info->outfile);
+			return_value = open_to_stdout(*f_info);
 			if (return_value != 0)
 				return (return_value);
 			if (cmd_info->cmd_not_found && fd1)
@@ -117,7 +137,7 @@ t_err	fork_start(int fd0[2], int fd1[2], t_cmd_info *cmd_info, \
 		close_pipe(fd1);
 		if (f_info->access_infile)
 		{
-			return_value = open_to_stdin(f_info->infile);
+			return_value = open_to_stdin(*f_info);
 			if (return_value != 0)
 				return (return_value);
 			if (cmd_info->cmd_not_found)

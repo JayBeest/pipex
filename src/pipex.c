@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/01 11:54:48 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 00:56:16 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int	main(int argc, char **argv, char **envp)
 	t_err	return_value;
 	int		exit_code;
 
+	pipex.fork_info.delimiter = ft_strdup("DELIMITER");
 	ft_bzero(&pipex, sizeof(pipex));
 	pipex.child_amount = argc - 3;
 	pipex.pipe_amount = argc - 4;

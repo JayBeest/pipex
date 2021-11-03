@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 00:56:16 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/03 02:24:42 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,9 @@ t_err	parse_files(char *in_arg, char *out_arg, t_fork_info *f_info)
 	f_info->infile = ft_strdup(in_arg);
 	if (!f_info->infile)
 		return (MALLOC_FAIL);
-	if (access(in_arg, R_OK) != OK)
+	if (ft_strncmp(f_info->infile, "here_doc", 9) == OK)
+		f_info->here_doc = TRUE;
+	else if (access(in_arg, R_OK) != OK)
 		create_errno_string(NO_ACCESS, in_arg);
 	else
 		f_info->access_infile = TRUE;
