@@ -36,6 +36,10 @@ void	free_heap(t_pipex *pipex)
 	int	i;
 
 	i = 0;
+	if (pipex->info.here_doc == TRUE)
+	{
+		
+	}
 	while (i < pipex->child_amount)
 	{
 		ft_delstr(pipex->cmd_info[i].full_cmd);
@@ -45,6 +49,7 @@ void	free_heap(t_pipex *pipex)
 	ft_free_split(pipex->fork_info.path_split);
 	ft_delstr(pipex->fork_info.infile);
 	ft_delstr(pipex->fork_info.outfile);
+	ft_delstr(pipex->fork_info.delimiter);
 }
 
 int	wait_for_children(t_pipex *pipex)

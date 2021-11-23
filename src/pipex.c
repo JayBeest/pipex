@@ -80,6 +80,7 @@ int	main(int argc, char **argv, char **envp)
 		free_heap(&pipex);
 		return (-1);
 	}
+	printf("DELIMITER ===== %s\n", pipex.fork_info.delimiter);
 	return_value = create_forks(&pipex);
 	if (return_value > MALLOC_FAIL)
 		return (-2);

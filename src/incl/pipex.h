@@ -36,6 +36,7 @@ typedef enum e_err
 	OPEN_FAIL,
 	EXECV_FAIL,
 	ENVP_FAIL,
+	DEL_FAIL,
 	DEFAULT
 }				t_err;
 
