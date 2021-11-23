@@ -17,11 +17,13 @@
 # define CMD_NOT_FOUND 127
 # define MAX_COMMANDS 1024
 
-typedef enum e_bool
-{
-	FALSE,
-	TRUE
-}				t_bool;
+// typedef enum e_bool
+// {
+// 	FALSE,
+// 	TRUE
+// }				t_bool;
+
+# include <libft.h>
 
 typedef enum e_err
 {
@@ -37,6 +39,7 @@ typedef enum e_err
 	EXECV_FAIL,
 	ENVP_FAIL,
 	DEL_FAIL,
+	HERE_DOC_FAIL,
 	DEFAULT
 }				t_err;
 
@@ -66,6 +69,7 @@ typedef struct s_fork_info
 	char		*infile;
 	char		*outfile;
 	char 		*delimiter;
+	int			here_doc_fd;
 	int			fd0[2];
 	int			fd1[2];
 	int			pid;

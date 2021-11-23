@@ -4,6 +4,7 @@ SRC = 		pipex.c \
 			parser.c \
 			forks.c \
 			path.c \
+			here_doc.c \
 			debug.c
 SRC_DIR =	src
 OBJ_DIR	= 	$(SRC_DIR)/obj

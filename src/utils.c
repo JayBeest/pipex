@@ -36,7 +36,7 @@ void	free_heap(t_pipex *pipex)
 	int	i;
 
 	i = 0;
-	if (pipex->info.here_doc == TRUE)
+	if (pipex->fork_info.here_doc == TRUE)
 	{
 		
 	}

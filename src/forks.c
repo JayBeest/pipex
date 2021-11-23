@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <pipex.h>
 #include <utils.h>
+#include <here_doc.h>
 
 #include <stdio.h>
 
@@ -36,19 +37,14 @@ t_err	open_to_stdout(t_fork_info f_info)
 	return (NO_ERROR);
 }
 
-int	make_here_doc(char *delimiter)
-{
-	printf("|->%s<-|\n", delimiter);
-	return (1);
-}
-
 t_err	open_to_stdin(t_fork_info f_info)
 {
 	int	fd;
 
 	if (f_info.here_doc)
-		fd = make_here_doc(f_info.delimiter);
-	fd = open(f_info.infile, O_RDONLY);
+		fd = f_info.here_doc_fd;
+	else
+		fd = open(f_info.infile, O_RDONLY);
 	if (fd == -1)
 		return (OPEN_FAIL);
 	if (dup2(fd, STDIN_FILENO) == -1)
@@ -123,7 +119,7 @@ t_err	fork_start(t_cmd_info *cmd_info, t_fork_info *f_info)
 		if (dup2(f_info->fd1[1], STDOUT_FILENO) == -1)
 			return (DUP2_FAIL);
 		close_pipe(f_info->fd1);
-		if (f_info->access_infile)
+		if (f_info->access_infile || f_info->here_doc)
 		{
 			return_value = open_to_stdin(*f_info);
 			if (return_value != 0)

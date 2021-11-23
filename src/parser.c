@@ -15,6 +15,7 @@
 #include <libft.h>
 #include <pipex.h>
 #include <path.h>
+#include <here_doc.h>
 
 t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 {
@@ -102,8 +103,6 @@ t_err	parse_commands(int argc, char **argv, t_pipex *pipex)
 
 	i = 0;
 	f_info = pipex->fork_info;
-	if (f_info.here_doc == TRUE)
-		i++;
 	while (i < pipex->child_amount)
 	{
 		if (create_cmd_split(argv[i], &pipex->cmd_info[i].cmd_split) \
@@ -155,9 +154,12 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 		return (MALLOC_FAIL);
 	if (f_info->here_doc == TRUE)
 	{
+		pipex->child_amount--;
 		rv = parse_delimiter(argv[2], &f_info->delimiter);
 		if (rv != NO_ERROR)
-			create_errno_string(rv, "DELIMITER :(");
+			create_errno_string(rv, "DELIMITER :("); // <-- what is dis?
+		f_info->here_doc_fd = make_here_doc(f_info->delimiter);
+		return (parse_commands(argc, argv + 3, pipex));
 	}
 	return (parse_commands(argc, argv + 2, pipex));
 }

@@ -11,11 +11,13 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <libft.h>
 #include <pipex.h>
 #include <parser.h>
 #include <forks.h>
 #include <utils.h>
+#include <here_doc.h>
 
 #include <stdio.h>
 
@@ -66,27 +68,31 @@ t_err	create_errno_string(t_err error, char *str)
 	return (error);
 }
 
+void	clean_exit(int exit_code)
+{
+	unlink(".here_doc");
+	exit (exit_code);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 	t_err	return_value;
 	int		exit_code;
 
-//	pipex.fork_info.delimiter = ft_strdup("DELIMITER");
 	ft_bzero(&pipex, sizeof(pipex));
 	return_value = parse_input(argc, argv, envp, &pipex);
 	if (return_value == MALLOC_FAIL)
-	{
-		free_heap(&pipex);
-		return (-1);
-	}
-	printf("DELIMITER ===== %s\n", pipex.fork_info.delimiter);
+		clean_exit(-1);
+	if (return_value > MALLOC_FAIL)
+		clean_exit(-2);
 	return_value = create_forks(&pipex);
 	if (return_value > MALLOC_FAIL)
-		return (-2);
+		clean_exit(-3);
 	if (pipex.fork_info.pid == 0)
 		return (0);
 	exit_code = wait_for_children(&pipex);
 	free_heap(&pipex);
+	unlink(".here_doc");
 	return (exit_code);
 }
