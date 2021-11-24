@@ -6,7 +6,7 @@ SRC = 		pipex.c \
 			path.c \
 			here_doc.c \
 			errors.c \
-			debug.c
+			dupstd.c
 SRC_DIR =	src
 OBJ_DIR	= 	$(SRC_DIR)/obj
 INCL = 		-I$(SRC_DIR)/incl
