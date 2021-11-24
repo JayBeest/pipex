@@ -30,8 +30,6 @@ int	main(int argc, char **argv, char **envp)
 		clean_exit(-1);
 	if (return_value > MALLOC_FAIL)
 		clean_exit(-2);
-	if (pipex.fork_info.here_doc)
-		return (1);
 	return_value = create_forks(&pipex);
 	if (return_value > MALLOC_FAIL)
 		clean_exit(-3);
