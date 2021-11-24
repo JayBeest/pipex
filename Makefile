@@ -1,21 +1,31 @@
 NAME = 		pipex
-SRC = 		pipex.c \
-			utils.c \
+NO_BONUS =	pipex.c
+DO_BONUS =	pipex_bonus.c
+SHARED =	utils.c \
 			parser.c \
 			forks.c \
 			path.c \
 			here_doc.c \
 			errors.c \
 			dupstd.c
+
+ifdef BONUS
+SRC = $(DO_BONUS) $(SHARED)
+else
+SRC = $(NO_BONUS) $(SHARED)
+endif
+
 SRC_DIR =	src
 OBJ_DIR	= 	$(SRC_DIR)/obj
 INCL = 		-I$(SRC_DIR)/incl
-C_FLAGS = 	-g -fsanitize=address -Wall -Wextra -Werror
+C_FLAGS = 	-Wall -Wextra -Werror #-g -fsanitize=address 
+
 OBJ = 		$(SRC:%.c=$(OBJ_DIR)/%.o)
 
 all: $(NAME)
 
-bonus: all
+bonus:
+	$(MAKE) BONUS=1 all
 
 $(NAME): $(OBJ)
 	$(MAKE) -C libft

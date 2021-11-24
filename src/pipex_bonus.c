@@ -22,7 +22,7 @@ int	main(int argc, char **argv, char **envp)
 	t_err	return_value;
 	int		exit_code;
 
-	if (argc != 5)
+	if (argc < 5)
 		return (1);
 	ft_bzero(&pipex, sizeof(pipex));
 	return_value = parse_input(argc, argv, envp, &pipex);

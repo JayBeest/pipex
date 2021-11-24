@@ -15,6 +15,7 @@
 #include <pipex.h>
 #include <path.h>
 #include <here_doc.h>
+#include <utils.h>
 
 t_err	create_cmd_split(char *cmd_arg, char ***cmd_split)
 {
@@ -104,10 +105,12 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 		return (MALLOC_FAIL);
 	if (f_info->here_doc == TRUE)
 	{
+		if (argc < 6)
+			clean_exit(-4);
 		pipex->child_amount--;
 		rv = parse_delimiter(argv[2], &f_info->delimiter);
 		if (rv != NO_ERROR)
-			create_errno_string(rv, "DELIMITER :("); // <-- what is dis?
+			return (create_errno_string(rv, "DELIMITER :("));
 		f_info->here_doc_fd = make_here_doc(f_info->delimiter);
 		return (parse_commands(argc, argv + 3, pipex));
 	}
