@@ -13,8 +13,8 @@
 #ifndef UTILS_H
 # define UTILS_H
 
-void	ft_delstr(char *str);
 void	close_pipe(int fd[2]);
+void	clean_exit(int exit_code);
 void	free_heap(t_pipex *pipex);
 int		wait_for_children(t_pipex *pipex);
 

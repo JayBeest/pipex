@@ -23,12 +23,10 @@ void	close_pipe(int fd[2])
 	close(fd[1]);
 }
 
-void	ft_delstr(char *str)
+void	clean_exit(int exit_code)
 {
-	if (!str)
-		return ;
-	free(str);
-	str = NULL;
+	unlink(".here_doc");
+	exit (exit_code);
 }
 
 void	free_heap(t_pipex *pipex)
@@ -36,20 +34,16 @@ void	free_heap(t_pipex *pipex)
 	int	i;
 
 	i = 0;
-	if (pipex->fork_info.here_doc == TRUE)
-	{
-		
-	}
 	while (i < pipex->child_amount)
 	{
-		ft_delstr(pipex->cmd_info[i].full_cmd);
+		ft_free_str(pipex->cmd_info[i].full_cmd);
 		ft_free_split(pipex->cmd_info[i].cmd_split);
 		i++;
 	}
 	ft_free_split(pipex->fork_info.path_split);
-	ft_delstr(pipex->fork_info.infile);
-	ft_delstr(pipex->fork_info.outfile);
-	ft_delstr(pipex->fork_info.delimiter);
+	ft_free_str(pipex->fork_info.infile);
+	ft_free_str(pipex->fork_info.outfile);
+	ft_free_str(pipex->fork_info.delimiter);
 }
 
 int	wait_for_children(t_pipex *pipex)

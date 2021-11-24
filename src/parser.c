@@ -125,7 +125,7 @@ t_err	parse_delimiter(char *delimiter, char **del_ptr)
 
 	if (!delimiter)
 		return (DEFAULT);
-		i = 0;
+	i = 0;
 	while (delimiter[i] != '\0')
 	{
 		if (!ft_isprint(delimiter[i]))

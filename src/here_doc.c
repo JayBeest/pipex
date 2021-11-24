@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-t_bool	delimiter_found(char *delimiter, char *line)
+static t_bool	delimiter_found(char *delimiter, char *line)
 {
 	if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == OK)
 		return (TRUE);

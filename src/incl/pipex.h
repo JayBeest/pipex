@@ -62,7 +62,7 @@ typedef struct s_fork_info
 	char		**path_split;
 	char		*infile;
 	char		*outfile;
-	char 		*delimiter;
+	char		*delimiter;
 	int			here_doc_fd;
 	int			fd0[2];
 	int			fd1[2];
