@@ -17,12 +17,6 @@
 # define CMD_NOT_FOUND 127
 # define MAX_COMMANDS 1024
 
-// typedef enum e_bool
-// {
-// 	FALSE,
-// 	TRUE
-// }				t_bool;
-
 # include <libft.h>
 
 typedef enum e_err
