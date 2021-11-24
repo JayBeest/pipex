@@ -10,17 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include <unistd.h>
-#include <libft.h>
 #include <pipex.h>
 #include <parser.h>
 #include <forks.h>
 #include <utils.h>
-#include <here_doc.h>
-#include <errors.h>
-
-#include <stdio.h>
 
 int	main(int argc, char **argv, char **envp)
 {

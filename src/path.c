@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.h>
 #include <pipex.h>
 
 t_err	create_path_split(char **envp, char ***path_split)

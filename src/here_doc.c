@@ -1,10 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   here_doc.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/11/24 13:31:19 by jcorneli          #+#    #+#             */
+/*   Updated: 2021/11/24 13:32:10 by jcorneli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <libft.h>
 #include <pipex.h>
-
-#include <stdio.h>
 
 static t_bool	delimiter_found(char *delimiter, char *line)
 {

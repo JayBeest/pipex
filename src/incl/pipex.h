@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 22:57:15 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/24 13:35:23 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ typedef enum e_fork_type
 
 typedef struct s_cmd_info
 {
-	t_bool	redirect_in;
-	t_bool	redirect_out;
 	t_bool	cmd_not_found;
 	char	*full_cmd;
 	char	**cmd_split;
@@ -74,7 +72,6 @@ typedef struct s_pipex
 	t_fork_info		fork_info;
 	t_cmd_info		cmd_info[MAX_COMMANDS];
 	int				child_amount;
-	int				pipe_amount;
 }				t_pipex;
 
 typedef t_err(*t_fork_fun)(t_cmd_info*, t_fork_info*);

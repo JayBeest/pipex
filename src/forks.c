@@ -14,9 +14,6 @@
 #include <fcntl.h>
 #include <pipex.h>
 #include <utils.h>
-#include <here_doc.h>
-
-#include <stdio.h>
 
 t_err	open_to_stdout(t_fork_info f_info)
 {

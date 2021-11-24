@@ -6,13 +6,12 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 21:15:19 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 23:24:16 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/24 13:35:23 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
-#include <libft.h>
 #include <pipex.h>
 #include <path.h>
 #include <here_doc.h>
@@ -147,7 +146,6 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 		return (NO_ARGS);
 	f_info = &pipex->fork_info;
 	pipex->child_amount = argc - 3;
-	pipex->pipe_amount = argc - 4;
 	if (create_path_split(envp, &f_info->path_split) == MALLOC_FAIL)
 		return (MALLOC_FAIL);
 	if (parse_files(argv[1], argv[argc - 1], &pipex->fork_info) == MALLOC_FAIL)

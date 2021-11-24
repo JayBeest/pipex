@@ -12,10 +12,7 @@
 
 #include <unistd.h>
 #include <stdlib.h>
-#include <libft.h>
 #include <pipex.h>
-
-#define OK 0
 
 void	close_pipe(int fd[2])
 {
