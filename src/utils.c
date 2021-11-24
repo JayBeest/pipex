@@ -55,6 +55,10 @@ int	wait_for_children(t_pipex *pipex)
 		i++;
 	}
 	if (pipex->cmd_info[i - 1].cmd_not_found)
+	{
+		if (access(pipex->cmd_info[i - 1].cmd_split[0], F_OK) == OK)
+			return (CMD_NO_ACCESS);
 		return (CMD_NOT_FOUND);
+	}
 	return (WEXITSTATUS(status));
 }
