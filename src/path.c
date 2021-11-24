@@ -68,6 +68,13 @@ t_err	check_set_cmd(char **path_split, t_cmd_info *cmd_info)
 	int		i;
 	t_err	err;
 
+	if (access(cmd_info->cmd_split[0], X_OK) == OK)
+	{
+		cmd_info->full_cmd = ft_strdup(cmd_info->cmd_split[0]);
+		if (!cmd_info->full_cmd)
+			return (MALLOC_FAIL);
+		return (NO_ERROR);
+	}
 	i = 0;
 	while (path_split[i])
 	{
