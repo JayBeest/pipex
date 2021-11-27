@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 00:26:17 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/26 16:25:43 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ void	free_heap(t_pipex *pipex)
 	i = 0;
 	while (i < pipex->child_amount)
 	{
-		ft_free_str(pipex->cmd_info[i].full_cmd);
-		ft_free_split(pipex->cmd_info[i].cmd_split);
+		ft_free_str(&pipex->cmd_info[i].full_cmd);
+		ft_free_split(&pipex->cmd_info[i].cmd_split);
 		i++;
 	}
-	ft_free_split(pipex->fork_info.path_split);
-	ft_free_str(pipex->fork_info.infile);
-	ft_free_str(pipex->fork_info.outfile);
-	ft_free_str(pipex->fork_info.delimiter);
+	ft_free_split(&pipex->fork_info.path_split);
+	ft_free_str(&pipex->fork_info.infile);
+	ft_free_str(&pipex->fork_info.outfile);
+	ft_free_str(&pipex->fork_info.delimiter);
 }
 
 int	wait_for_children(t_pipex *pipex)
@@ -55,10 +55,8 @@ int	wait_for_children(t_pipex *pipex)
 		i++;
 	}
 	if (pipex->cmd_info[i - 1].cmd_not_found)
-	{
-		if (access(pipex->cmd_info[i - 1].cmd_split[0], F_OK) == OK)
-			return (CMD_NO_ACCESS);
 		return (CMD_NOT_FOUND);
-	}
+	else if (pipex->cmd_info[i - 1].permission_denied)
+		return (CMD_NO_ACCESS);
 	return (WEXITSTATUS(status));
 }

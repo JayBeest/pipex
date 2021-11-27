@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 22:14:40 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/10/27 02:18:54 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/25 00:19:59 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,8 @@ t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 	return (NO_CMD);
 }
 
-t_err	check_set_cmd(char **path_split, t_cmd_info *cmd_info)
+t_err	absolute_relative_path(t_cmd_info *cmd_info)
 {
-	int		i;
-	t_err	err;
-
 	if (access(cmd_info->cmd_split[0], X_OK) == OK)
 	{
 		cmd_info->full_cmd = ft_strdup(cmd_info->cmd_split[0]);
@@ -75,11 +72,30 @@ t_err	check_set_cmd(char **path_split, t_cmd_info *cmd_info)
 			return (MALLOC_FAIL);
 		return (NO_ERROR);
 	}
+	if (access(cmd_info->cmd_split[0], F_OK) == OK)
+	{
+		cmd_info->permission_denied = 1;
+		return (NO_ACCESS);
+	}
+	cmd_info->cmd_not_found = 1;
+	return (NO_CMD);
+}
+
+t_err	check_set_cmd(char **path_split, t_cmd_info *cmd_info)
+{
+	int		i;
+	t_err	err;
+	char	*cmd;
+
+	cmd = cmd_info->cmd_split[0];
+	if (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/') || \
+		(cmd[0] == '~' && cmd[1] == '/') || \
+		(cmd[0] == '.' && cmd[1] == '.' && cmd[2] == '/'))
+		return (absolute_relative_path(cmd_info));
 	i = 0;
 	while (path_split[i])
 	{
-		err = correct_path(path_split[i], cmd_info->cmd_split[0], \
-				&cmd_info->full_cmd);
+		err = correct_path(path_split[i], cmd, &cmd_info->full_cmd);
 		if (err == NO_ERROR)
 			return (NO_ERROR);
 		else if (err == MALLOC_FAIL)

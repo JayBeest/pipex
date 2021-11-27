@@ -63,9 +63,9 @@ t_err	parse_commands(int argc, char **argv, t_pipex *pipex)
 		rv = check_set_cmd(pipex->fork_info.path_split, &pipex->cmd_info[i]);
 		if (rv == MALLOC_FAIL)
 			return (MALLOC_FAIL);
-		else if (rv == NO_CMD && !((i == 2 && f_info.access_infile == FALSE) \
+		else if ((rv == NO_CMD || rv == NO_ACCESS) && !((i == 2 && f_info.access_infile == FALSE) \
 				|| (i == argc - 2 && f_info.access_outfile == FALSE)))
-			create_errno_string(NO_CMD, pipex->cmd_info[i].cmd_split[0]);
+			create_errno_string(rv, pipex->cmd_info[i].cmd_split[0]);
 		i++;
 	}
 	return (NO_ERROR);

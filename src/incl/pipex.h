@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/24 13:35:23 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/11/24 23:42:40 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef enum e_fork_type
 typedef struct s_cmd_info
 {
 	t_bool	cmd_not_found;
+	t_bool	permission_denied;
 	char	*full_cmd;
 	char	**cmd_split;
 }				t_cmd_info;
