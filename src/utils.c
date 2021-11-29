@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <pipex.h>
 
+#include <stdio.h>
+
 void	close_pipe(int fd[2])
 {
 	close(fd[0]);
@@ -46,17 +48,21 @@ void	free_heap(t_pipex *pipex)
 int	wait_for_children(t_pipex *pipex)
 {
 	int	status;
+	int	last_status;
 	int	i;
 
 	i = 0;
 	while (i < pipex->child_amount)
 	{
-		wait(&status);
+		if (wait(&status) == pipex->fork_info.last_pid)
+			last_status = status;
 		i++;
 	}
+	if (pipex->fork_info.access_outfile == FALSE)
+		return (NO_OUTFILE);
 	if (pipex->cmd_info[i - 1].cmd_not_found)
 		return (CMD_NOT_FOUND);
 	else if (pipex->cmd_info[i - 1].permission_denied)
 		return (CMD_NO_ACCESS);
-	return (WEXITSTATUS(status));
+	return (WEXITSTATUS(last_status));
 }

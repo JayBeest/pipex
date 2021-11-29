@@ -14,6 +14,7 @@
 # define PIPEX_H
 
 # define OK 0
+# define NO_OUTFILE	1
 # define CMD_NO_ACCESS 126
 # define CMD_NOT_FOUND 127
 # define MAX_COMMANDS 1024
@@ -67,6 +68,7 @@ typedef struct s_fork_info
 	int			fd0[2];
 	int			fd1[2];
 	int			pid;
+	int			last_pid;
 }				t_fork_info;
 
 typedef struct s_pipex

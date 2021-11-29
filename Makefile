@@ -26,10 +26,12 @@ all: $(NAME)
 
 bonus:
 	$(MAKE) BONUS=1 all
+	touch src/pipex.c
 
 $(NAME): $(OBJ)
 	$(MAKE) -C libft
 	$(CC) $^ $(C_FLAGS) -Llibft -lft -o $@
+	touch src/pipex_bonus.c
 
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.c
 	@mkdir -p $(@D)

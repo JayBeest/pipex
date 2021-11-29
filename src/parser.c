@@ -47,7 +47,7 @@ t_err	parse_files(char *in_arg, char *out_arg, t_fork_info *f_info)
 	return (NO_ERROR);
 }
 
-t_err	parse_commands(int argc, char **argv, t_pipex *pipex)
+t_err	parse_commands(char **argv, t_pipex *pipex)
 {
 	t_fork_info	f_info;
 	int			i;
@@ -63,8 +63,9 @@ t_err	parse_commands(int argc, char **argv, t_pipex *pipex)
 		rv = check_set_cmd(pipex->fork_info.path_split, &pipex->cmd_info[i]);
 		if (rv == MALLOC_FAIL)
 			return (MALLOC_FAIL);
-		else if ((rv == NO_CMD || rv == NO_ACCESS) && !((i == 2 && f_info.access_infile == FALSE) \
-				|| (i == argc - 2 && f_info.access_outfile == FALSE)))
+		else if ((rv == NO_CMD || rv == NO_ACCESS) && !((i == 0 && \
+			f_info.access_infile == FALSE) || (i == pipex->child_amount - 1 \
+			&& f_info.access_outfile == FALSE)))
 			create_errno_string(rv, pipex->cmd_info[i].cmd_split[0]);
 		i++;
 	}
@@ -112,7 +113,7 @@ t_err	parse_input(int argc, char **argv, char **envp, t_pipex *pipex)
 		if (rv != NO_ERROR)
 			return (create_errno_string(rv, "DELIMITER :("));
 		f_info->here_doc_fd = make_here_doc(f_info->delimiter);
-		return (parse_commands(argc, argv + 3, pipex));
+		return (parse_commands(argv + 3, pipex));
 	}
-	return (parse_commands(argc, argv + 2, pipex));
+	return (parse_commands(argv + 2, pipex));
 }

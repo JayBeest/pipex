@@ -139,6 +139,8 @@ t_err	create_forks(t_pipex *pipex)
 			return (err);
 		if (f_info->pid == 0)
 			break ;
+		else if (f_info->type == END)
+			f_info->last_pid = f_info->pid;
 		i++;
 	}
 	return (NO_ERROR);
