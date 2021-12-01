@@ -26,7 +26,6 @@ void	print_split(char **split)
 		i++;
 	}
 	printf("split[%d] = %s\n", i, split[i]);
-
 	printf("\n******\n\n");
 }
 
@@ -46,7 +45,7 @@ void	check_access(char *file)
 
 void	debug(t_pipex *pipex)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < pipex->child_amount)

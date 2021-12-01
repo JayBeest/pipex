@@ -53,9 +53,6 @@ t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 		return (NO_ERROR);
 	}
 	free(full_cmd);
-	// *cmd_ptr = ft_strdup(cmd);
-	// if (!*cmd_ptr)
-	// 	return (MALLOC_FAIL);
 	return (NO_CMD);
 }
 
