@@ -6,7 +6,7 @@
 /*   By: jcorneli <marvin@codam.nl>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 09:35:42 by jcorneli          #+#    #+#             */
-/*   Updated: 2021/11/03 23:23:29 by jcorneli         ###   ########.fr       */
+/*   Updated: 2021/12/01 01:34:19 by jcorneli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,26 @@
 #include <forks.h>
 #include <utils.h>
 
+#include <stdlib.h>
+#include <stdio.h>
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 	t_err	return_value;
 	int		exit_code;
+
+	if (argc == 1)
+	{
+
+		char **str;
+		str = ft_split("test split hier", '\0');
+		ft_free_split(&str);
+		system("leaks pipex");
+		printf("ja hier\n");
+		return (0);
+	}
+
 
 	if (argc != 5)
 		return (1);
@@ -40,5 +55,6 @@ int	main(int argc, char **argv, char **envp)
 	exit_code = wait_for_children(&pipex);
 	free_heap(&pipex);
 	unlink(".here_doc");
+	system("leaks pipex");
 	return (exit_code);
 }

@@ -44,19 +44,15 @@ t_err	correct_path(char *current_path, char *cmd, char **cmd_ptr)
 	if (!path)
 		return (MALLOC_FAIL);
 	full_cmd = ft_strjoin(path, cmd);
+	free (path);
 	if (!full_cmd)
-	{
-		free(path);
 		return (MALLOC_FAIL);
-	}
 	if (access(full_cmd, X_OK) == OK)
 	{
-		free(path);
 		*cmd_ptr = full_cmd;
 		return (NO_ERROR);
 	}
 	free(full_cmd);
-	free(path);
 	*cmd_ptr = ft_strdup(cmd);
 	if (!*cmd_ptr)
 		return (MALLOC_FAIL);

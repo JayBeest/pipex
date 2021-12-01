@@ -123,7 +123,7 @@ t_err	create_forks(t_pipex *pipex)
 	int						i;
 	t_err					err;
 	t_fork_info				*f_info;
-	const static t_fork_fun	fun_ptr[3] = {
+	static const t_fork_fun	fun_ptr[3] = {
 		[START] = fork_start,
 		[MID] = fork_mid,
 		[END] = fork_end
