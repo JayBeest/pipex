@@ -25,6 +25,8 @@ void	print_split(char **split)
 		printf("split[%d] = %s\n", i, split[i]);
 		i++;
 	}
+	printf("split[%d] = %s\n", i, split[i]);
+
 	printf("\n******\n\n");
 }
 
@@ -40,4 +42,23 @@ void	check_access(char *file)
 		printf("F_OK\n");
 	if (access(file, F_OK | R_OK) == 0)
 		printf("F_OK | R_OK\n");
+}
+
+void	debug(t_pipex *pipex)
+{
+	int i;
+
+	i = 0;
+	while (i < pipex->child_amount)
+	{
+		if (pipex->cmd_info[i].cmd_split)
+			print_split(pipex->cmd_info[i].cmd_split);
+		else
+			printf("cmd_info[%d].cmd_split == NULL\n", i);
+		if (pipex->cmd_info[i].full_cmd)
+			printf("full_cmd[%d]->%s\n", i, pipex->cmd_info[i].full_cmd);
+		else
+			printf("cmd_info[%d].full_cmd == NULL\n", i);
+		i++;
+	}
 }

@@ -17,5 +17,6 @@
 
 void	print_split(char **split);
 void	check_access(char *file);
+void	debug(t_pipex *pipex);
 
 #endif

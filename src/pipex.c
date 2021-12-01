@@ -17,25 +17,12 @@
 #include <utils.h>
 
 #include <stdlib.h>
-#include <stdio.h>
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 	t_err	return_value;
 	int		exit_code;
-
-	if (argc == 1)
-	{
-
-		char **str;
-		str = ft_split("test split hier", '\0');
-		ft_free_split(&str);
-		system("leaks pipex");
-		printf("ja hier\n");
-		return (0);
-	}
-
 
 	if (argc != 5)
 		return (1);
@@ -53,8 +40,9 @@ int	main(int argc, char **argv, char **envp)
 	if (pipex.fork_info.pid == 0)
 		return (0);
 	exit_code = wait_for_children(&pipex);
-	free_heap(&pipex);
-	unlink(".here_doc");
 	system("leaks pipex");
+	free_heap(&pipex);
+	system("leaks pipex");
+	unlink(".here_doc");
 	return (exit_code);
 }
