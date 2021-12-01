@@ -33,16 +33,14 @@ int	main(int argc, char **argv, char **envp)
 	if (return_value > MALLOC_FAIL)
 		clean_exit(-2);
 	if (pipex.fork_info.here_doc)
-		return (1);
+		exit (-3);
 	return_value = create_forks(&pipex);
 	if (return_value > MALLOC_FAIL)
-		clean_exit(-3);
+		clean_exit(-4);
 	if (pipex.fork_info.pid == 0)
 		return (0);
 	exit_code = wait_for_children(&pipex);
-	system("leaks pipex");
 	free_heap(&pipex);
-	system("leaks pipex");
 	unlink(".here_doc");
 	return (exit_code);
 }
